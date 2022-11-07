@@ -1,0 +1,1 @@
+enum StatusTest { safe, unsafe, buruburu, notavailable }
