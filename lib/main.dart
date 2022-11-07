@@ -16,6 +16,8 @@ import 'presentation/pages/page_result.dart';
 import 'presentation/pages/page_splash.dart';
 import 'presentation/providers/provider_auth.dart';
 
+
+
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   runApp(MultiProvider(

@@ -12,7 +12,7 @@ class ResultTest extends ChangeNotifier {
     required this.dateCreated,
   });
 
-  final String idTest;
+  final int idTest;
   final int testNumber;
   final int result;
   final DateTime sleepDate;
@@ -21,7 +21,7 @@ class ResultTest extends ChangeNotifier {
   final StatusTest statusTest;
 
   ResultTest copyWith({
-    String? idTest,
+    int? idTest,
     int? testNumber,
     int? result,
     DateTime? sleepDate,
@@ -43,11 +43,17 @@ class ResultTest extends ChangeNotifier {
   factory ResultTest.fromMap(Map<String, dynamic> json) => ResultTest(
         idTest: json["id_test"],
         testNumber: json["test_number"],
-        sleepDate: json["sleep_date"],
-        wakeupTime: json["wakeup_time"],
-        dateCreated: json["date_created"],
+        sleepDate: DateTime.tryParse(json["sleep_date"])!,
+        wakeupTime: DateTime.tryParse(json["wakeup_time"])!,
+        dateCreated: DateTime.tryParse(json["date_created"])!,
         result: json["result_test"],
-        statusTest: json["status_test"],
+        statusTest: json["status_test"] == 'notavailable'
+            ? StatusTest.notavailable
+            : json["status_test"] == 'unsafe'
+                ? StatusTest.unsafe
+                : json["safe"] == 'notavailable'
+                    ? StatusTest.safe
+                    : StatusTest.buruburu,
       );
 
   Map<String, dynamic> toMap() => {

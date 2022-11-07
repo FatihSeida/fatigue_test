@@ -1,20 +1,25 @@
+
 import 'package:fatigue_tester/data/common/constant/assets.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class LoadingDialog extends StatelessWidget {
   BuildContext? parentContext;
-  bool showing = false;
+  bool showing=false;
   final bool cancelable;
   final String? message;
   var count = 0;
 
-  LoadingDialog({Key? key, this.cancelable = false, this.message})
-      : super(key: key);
+  LoadingDialog({
+    Key? key,
+    this.cancelable = false,
+    this.message
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
+
       backgroundColor: Colors.transparent,
       elevation: 0,
       content: Column(
@@ -42,7 +47,7 @@ class LoadingDialog extends StatelessWidget {
   show(BuildContext context) {
     parentContext = context;
     showing = true;
-    if (count == 0) {
+    if(count==0){
       _showLoadingDialog(context, this).then((_) {
         showing = false;
       });
@@ -51,19 +56,21 @@ class LoadingDialog extends StatelessWidget {
   }
 
   hide() {
-    try {
+    try{
       count--;
-      if (count == 0 && Navigator.of(parentContext!).canPop())
-        Navigator.of(parentContext!).pop();
-    } on Exception catch (_, e) {
+      if(count==0 && Navigator.of(parentContext!).canPop()) Navigator.of(parentContext!).pop();
+    }on Exception catch (_, e){
       print("error $e");
     }
   }
+
 }
 
+
 Future _showLoadingDialog(BuildContext c, LoadingDialog loading,
-        {bool cancelable = true}) =>
+    {bool cancelable = true}) =>
     showDialog(
         context: c,
         barrierDismissible: false,
         builder: (BuildContext c) => Center(child: loading));
+

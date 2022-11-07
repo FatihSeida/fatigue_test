@@ -60,7 +60,6 @@ class FatigueTestProvider extends ChangeNotifier {
     loading ? _loadingDialog.show(_context) : _loadingDialog.hide();
   }
 
-  /// Init
   set context(BuildContext context) => _context = context;
 
   @override
@@ -90,13 +89,14 @@ class FatigueTestProvider extends ChangeNotifier {
     } else {
       stopWatchTimer.onStopTimer();
       if (eq(comparingItems, shuffleItems) == true) {
-        sendData(
+        await sendData(
             nik: user!.nik,
             sleepDate: selectedDate!,
             sleepTime: selectedTimeSleep!,
             swt: stopWatchTimer.rawTime.value,
             wakeUpTime: selectedTimeWakeUp!);
         same = true;
+        notifyListeners();
         return play;
       }
       play = true;
@@ -121,7 +121,7 @@ class FatigueTestProvider extends ChangeNotifier {
       String formatted = formatter.format(dt);
 
       final Database db = await database;
-      var res = await db.insert('test', {
+      await db.insert('test', {
         'sleep_date': formatted,
         'wakeup_time': formatter.format(wakeUpTime),
         'date_created': formatter.format(
@@ -129,15 +129,11 @@ class FatigueTestProvider extends ChangeNotifier {
         ),
         'nik_user': nik,
         'result_test': swt,
-        'test_number': testNumber ?? 0,
+        'test_number': resultTest.length,
         'status_test': statusTest.name,
       });
-      if (res != 0) {
-        notifyListeners();
-        setLoading(false);
-      } else {
-        setLoading(false);
-      }
+      setLoading(false);
+      notifyListeners();
     } catch (e) {
       log(e.toString());
       rethrow;
@@ -150,45 +146,11 @@ class FatigueTestProvider extends ChangeNotifier {
       final Database db = await database;
       final List<Map<String, dynamic>> maps =
           await db.query('test', where: "nik_user = ?", whereArgs: [user!.nik]);
-      Map<String, dynamic> result = {};
-      for (var r in maps) {
-        result.addAll(r);
-      }
-      result;
+      var result = List<ResultTest>.generate(
+          maps.length, (i) => ResultTest.fromMap(maps[i]));
+      resultTest = result;
       notifyListeners();
       setLoading(false);
-      // resultTest(List<ResultTest>.generate(
-      //     maps.length,
-      //     (i) => ResultTest(
-      //           result: maps[i]['result_test'],
-      //           idTest: maps[i]['result_test'],
-      //           testNumber: maps[i]['result_test'],
-      //           sleepDate: maps[i]['result_test'],
-      //           wakeupTime: maps[i]['result_test'],
-      //           dateCreated: maps[i]['result_test'],
-      //           statusTest: maps[i]['result_test'],
-      //         )));
-      // locationAttendance(RxList<Attendance>.generate(
-      //     maps.length,
-      //     (i) => Attendance(
-      //           // id: maps[i]['id'],
-      //           name: maps[i]['name'],
-      //           longitude: maps[i]['longitude'],
-      //           latitude: maps[i]['latitude'],
-      //           latitudeLocation: maps[i]['latitudeLocation'],
-      //           longitudeLocation: maps[i]['longitudeLocation'],
-      //           nameLocation: maps[i]['nameLocation'],
-      //         )).toList());
-      // distance(RxList<double>.generate(
-      //     maps.length,
-      //     (i) => GeolocatorPlatform.instance.distanceBetween(
-      //           maps[i]['latitude'],
-      //           maps[i]['longitude'],
-      //           maps[i]['latitudeLocation'],
-      //           maps[i]['longitudeLocation'],
-      //         )).toList());
-      // loading(false);
-      // update();
     } catch (e) {
       log(e.toString());
     }

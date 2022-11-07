@@ -35,14 +35,9 @@ class _FatigueTestPageState extends State<FatigueTestPage> {
   }
 
   @override
-  void initState() {
-    context.read<FatigueTestProvider>().context = context;
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    // final completeVesselProvider = Provider.of<CompleteVesselProvider>(context);
+    context.read<FatigueTestProvider>().context = context;
+    
     List<Widget> fatiguePages = [
       FatigueTestForm(),
       FatigueTestForm2(),

@@ -71,7 +71,7 @@ class ResultWidget extends StatelessWidget {
                       padding: EdgeInsets.only(top: Insets.med),
                       child: InformationItem(
                         title: 'Nomor Pengujian',
-                        value: resultTest.idTest,
+                        value: '${resultTest.idTest}',
                       ),
                     ),
                     Padding(

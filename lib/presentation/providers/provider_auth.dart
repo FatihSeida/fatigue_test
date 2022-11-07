@@ -25,7 +25,6 @@ class AuthProvider extends ChangeNotifier {
   bool isObscure = true;
   bool isLoading = false;
   String? _message;
-
   String? username;
   String? password;
 
@@ -66,7 +65,7 @@ class AuthProvider extends ChangeNotifier {
 
   Future<void> getUser(String name, String nik) async {
     try {
-      await setLoading(true);
+      setLoading(true);
       Database db = await database;
       final res = await db.rawQuery(
           "SELECT * FROM $table WHERE name = '$name' AND nik = '$nik'");
@@ -74,8 +73,8 @@ class AuthProvider extends ChangeNotifier {
         User user = User.fromMap(res[0]);
         SpUtil.putString(USER_ID, user.nik);
         setStatus(Authentication.authenticated);
-        await setLoading(false);
         _user = user;
+        setLoading(false);
         notifyListeners();
       }
     } catch (e) {

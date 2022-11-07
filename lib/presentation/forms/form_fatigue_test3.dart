@@ -151,11 +151,16 @@ class _FatigueTestForm3State extends State<FatigueTestForm3> {
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 4),
                     child: ElevatedButton(
-                      onPressed: () {
-                        provider.startStopWatch();
-                        if (provider.play == false && provider.same == true) {
-                          Navigator.of(context).pushNamed(ResultPage.routeName);
-                        }
+                      onPressed: () async {
+                        await provider.startStopWatch().then((_) {
+                          if (!mounted) {
+                            return;
+                          }
+                          if (provider.play == false && provider.same == true) {
+                            Navigator.of(context)
+                                .pushNamed(ResultPage.routeName);
+                          }
+                        });
                       },
                       style: ElevatedButton.styleFrom(
                         shape: CircleBorder(),

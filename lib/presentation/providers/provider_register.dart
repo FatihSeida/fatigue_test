@@ -26,10 +26,10 @@ class RegistrationProvider extends ChangeNotifier {
   User? get user => _user;
 
   Future<void> setLoading(bool loading) async {
-    await loading ? _loadingDialog.show(_context) : _loadingDialog.hide();
+    loading ? _loadingDialog.show(_context) : _loadingDialog.hide();
   }
 
-  /// Init
+  // /// Init
   set context(BuildContext context) => _context = context;
 
   Future<void> showMessage(bool success, String message) async {
