@@ -16,8 +16,9 @@ class ResultPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // final provider = Provider.of<FatigueTestProvider>(context).getData();
+    final provider = Provider.of<FatigueTestProvider>(context);
     context.read<FatigueTestProvider>().context = context;
+
     return Scaffold(
       body: Container(
         decoration: const BoxDecoration(
@@ -45,10 +46,12 @@ class ResultPage extends StatelessWidget {
                   textAlign: TextAlign.center,
                 ),
               ),
-              // Padding(
-              //   padding: EdgeInsets.only(top: Insets.xl),
-              //   child: ResultWidget(),
-              // ),
+              Padding(
+                padding: EdgeInsets.only(top: Insets.xl),
+                child: ResultWidget(
+                  resultTest: provider.lastResultTest,
+                ),
+              ),
               Padding(
                 padding: EdgeInsets.symmetric(
                     vertical: Insets.xxl, horizontal: Insets.xxl),
@@ -57,9 +60,6 @@ class ResultPage extends StatelessWidget {
                     ButtonDefault(
                         title: 'OK',
                         onTap: () {
-                          Provider.of<FatigueTestProvider>(context,
-                                  listen: false)
-                              .getData();
                           Navigator.of(context).pushNamedAndRemoveUntil(
                               LandingPage.routeName,
                               (Route<dynamic> route) => false);

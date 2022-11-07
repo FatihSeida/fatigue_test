@@ -6,8 +6,8 @@ import '../../../data/common/constant/styles.dart';
 class InformationItemRed extends StatelessWidget {
   const InformationItemRed({
     Key? key,
-     this.title,
-     this.value,
+    this.title,
+    this.value,
   }) : super(key: key);
 
   final String? title;

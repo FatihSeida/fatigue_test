@@ -36,6 +36,14 @@ class FatigueTestProvider extends ChangeNotifier {
   StatusTest statusTest = StatusTest.notavailable;
 
   List<ResultTest> resultTest = [];
+  ResultTest lastResultTest = ResultTest(
+      statusTest: StatusTest.notavailable,
+      result: 0,
+      idTest: 0,
+      testNumber: 0,
+      sleepDate: DateTime.now(),
+      wakeupTime: DateTime.now(),
+      dateCreated: DateTime.now());
 
   final StopWatchTimer stopWatchTimer = StopWatchTimer(
     mode: StopWatchMode.countUp,
@@ -61,6 +69,7 @@ class FatigueTestProvider extends ChangeNotifier {
   }
 
   set context(BuildContext context) => _context = context;
+  set lastResultTestt(List<ResultTest> r) => lastResultTest = r[r.length - 1];
 
   @override
   void dispose() async {
@@ -95,6 +104,7 @@ class FatigueTestProvider extends ChangeNotifier {
             sleepTime: selectedTimeSleep!,
             swt: stopWatchTimer.rawTime.value,
             wakeUpTime: selectedTimeWakeUp!);
+        await getData();
         same = true;
         notifyListeners();
         return play;
@@ -149,6 +159,7 @@ class FatigueTestProvider extends ChangeNotifier {
       var result = List<ResultTest>.generate(
           maps.length, (i) => ResultTest.fromMap(maps[i]));
       resultTest = result;
+      lastResultTest = result[result.length - 1];
       notifyListeners();
       setLoading(false);
     } catch (e) {

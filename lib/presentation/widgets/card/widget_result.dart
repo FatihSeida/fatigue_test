@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 import '../../../data/common/constant/assets.dart';
 import '../../../data/common/constant/color.dart';
@@ -17,7 +18,6 @@ class ResultWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var duration = Duration(seconds: resultTest.result);
     return Container(
       decoration: FTStyle.coloredBorder(),
       child: Column(
@@ -47,7 +47,7 @@ class ResultWidget extends StatelessWidget {
                         Padding(
                           padding: EdgeInsets.only(top: Insets.xs),
                           child: Text(
-                            '$duration',
+                            Duration(seconds: resultTest.result).toString(),
                             style:
                                 TextStyles.textXl.copyWith(color: Colors.white),
                           ),
@@ -71,14 +71,15 @@ class ResultWidget extends StatelessWidget {
                       padding: EdgeInsets.only(top: Insets.med),
                       child: InformationItem(
                         title: 'Nomor Pengujian',
-                        value: '${resultTest.idTest}',
+                        value: '${resultTest.testNumber}',
                       ),
                     ),
                     Padding(
                       padding: EdgeInsets.only(top: Insets.med),
                       child: InformationItem(
                         title: 'Tanggal Tidur',
-                        value: 'Mon, 25 Aug 2021',
+                        value: DateFormat('EEE, dd MMM yyyy')
+                            .format(resultTest.sleepDate),
                       ),
                     ),
                     Padding(
@@ -86,7 +87,7 @@ class ResultWidget extends StatelessWidget {
                           EdgeInsets.only(top: Insets.med, bottom: Insets.med),
                       child: InformationItem(
                         title: 'Waktu Bangun',
-                        value: '06.30',
+                        value: DateFormat.Hm().format(resultTest.wakeupTime),
                       ),
                     ),
                   ],
@@ -100,14 +101,15 @@ class ResultWidget extends StatelessWidget {
                         padding: EdgeInsets.only(top: Insets.med),
                         child: InformationItem(
                           title: 'Tanggal Pengujian',
-                          value: 'Thu, 26 Aug 2021',
+                          value: DateFormat('EEE, dd MMM yyyy')
+                              .format(resultTest.dateCreated),
                         ),
                       ),
                       Padding(
                         padding: EdgeInsets.only(top: Insets.med),
                         child: InformationItem(
                           title: 'Waktu Tidur',
-                          value: '21.00',
+                          value: DateFormat.Hm().format(resultTest.sleepDate),
                         ),
                       ),
                       Padding(
@@ -144,7 +146,7 @@ class ResultWidget extends StatelessWidget {
                                 TextStyles.text12.copyWith(color: Colors.white),
                           ),
                           Text(
-                            'Unsafe',
+                            resultTest.statusTest.name,
                             style: TextStyles.text16Bold
                                 .copyWith(color: Colors.white),
                           )
