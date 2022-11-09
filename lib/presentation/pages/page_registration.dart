@@ -96,8 +96,7 @@ class RegistrationPage extends StatelessWidget {
                       style: TextStyles.text12Bold.copyWith(color: FTColor.red),
                       recognizer: TapGestureRecognizer()
                         ..onTap = () {
-                          Navigator.of(context)
-                              .pushNamed(LoginScreen.routeName);
+                          Navigator.of(context).pop();
                         },
                     ),
                   ], style: const TextStyle(color: Colors.black))),

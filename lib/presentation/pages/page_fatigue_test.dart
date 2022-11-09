@@ -37,7 +37,6 @@ class _FatigueTestPageState extends State<FatigueTestPage> {
   @override
   Widget build(BuildContext context) {
     context.read<FatigueTestProvider>().context = context;
-    
     List<Widget> fatiguePages = [
       FatigueTestForm(),
       FatigueTestForm2(),

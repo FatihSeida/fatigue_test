@@ -18,7 +18,6 @@ class ResultPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final provider = Provider.of<FatigueTestProvider>(context);
     context.read<FatigueTestProvider>().context = context;
-
     return Scaffold(
       body: Container(
         decoration: const BoxDecoration(

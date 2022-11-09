@@ -2,6 +2,7 @@ import 'package:fatigue_tester/data/common/constant/fatigue_test_icons.dart';
 import 'package:fatigue_tester/presentation/pages/page_fatigue_test.dart';
 import 'package:fatigue_tester/presentation/pages/page_history_test.dart';
 import 'package:fatigue_tester/presentation/providers/provider_auth.dart';
+import 'package:fatigue_tester/presentation/providers/provider_fatigue_test.dart';
 import 'package:fatigue_tester/presentation/widgets/button/button_default.dart';
 import 'package:fatigue_tester/presentation/widgets/etc/widget_appbar.dart';
 import 'package:flutter/material.dart';
@@ -20,8 +21,8 @@ class LandingPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    context.read<AuthProvider>().context = context;
     final provider = Provider.of<AuthProvider>(context);
+    Provider.of<FatigueTestProvider>(context).getData();
     return Scaffold(
       drawer: Drawer(
         backgroundColor: Colors.white,
