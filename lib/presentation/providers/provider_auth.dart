@@ -1,5 +1,7 @@
+import 'dart:convert';
 import 'dart:developer';
 
+import 'package:fatigue_tester/presentation/pages/page_landing.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:sp_util/sp_util.dart';
 import 'package:sqflite/sqflite.dart';
@@ -21,12 +23,16 @@ class AuthProvider extends ChangeNotifier {
   Authentication get status => _status;
   Authentication _status = Authentication.uninitialized;
   late BuildContext _context;
+  // BuildContext context;
   final _loadingDialog = LoadingDialog();
   bool isObscure = true;
-  bool isLoading = false;
   String? _message;
   String? username;
   String? password;
+
+  // AuthProvider({
+  //   required this.context,
+  // });
 
   User? get user => _user;
 
@@ -46,6 +52,7 @@ class AuthProvider extends ChangeNotifier {
   Future<void> setLoading(bool loading) async {
     loading ? _loadingDialog.show(_context) : _loadingDialog.hide();
   }
+
 
   /// Init
   set context(BuildContext context) => _context = context;
@@ -72,10 +79,10 @@ class AuthProvider extends ChangeNotifier {
       if (res.isNotEmpty) {
         User user = User.fromMap(res[0]);
         SpUtil.putString(USER_ID, user.nik);
+        setLoading(false);
         setStatus(Authentication.authenticated);
         _user = user;
-        setLoading(false);
-        notifyListeners();
+        Navigator.of(_context).pushNamedAndRemoveUntil("/", (route) => false);
       }
     } catch (e) {
       log(e.toString());

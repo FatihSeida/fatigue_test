@@ -116,6 +116,8 @@ class FatigueTestProvider extends ChangeNotifier {
     }
   }
 
+
+
   Future<void> sendData({
     required int swt,
     required DateTime sleepDate,
@@ -152,7 +154,6 @@ class FatigueTestProvider extends ChangeNotifier {
 
   Future<void> getData() async {
     try {
-      setLoading(true);
       final Database db = await database;
       final List<Map<String, dynamic>> maps =
           await db.query('test', where: "nik_user = ?", whereArgs: [user!.nik]);
@@ -161,7 +162,6 @@ class FatigueTestProvider extends ChangeNotifier {
       resultTest = result;
       lastResultTest = result[result.length - 1];
       notifyListeners();
-      setLoading(false);
     } catch (e) {
       log(e.toString());
     }

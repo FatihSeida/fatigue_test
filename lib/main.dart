@@ -16,14 +16,12 @@ import 'presentation/pages/page_result.dart';
 import 'presentation/pages/page_splash.dart';
 import 'presentation/providers/provider_auth.dart';
 
-
-
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   runApp(MultiProvider(
     providers: [
-      ChangeNotifierProvider.value(
-        value: AuthProvider(),
+      ChangeNotifierProvider(
+        create: (context) => AuthProvider(),
       ),
       ChangeNotifierProxyProvider<AuthProvider, RegistrationProvider>(
         create: (context) => RegistrationProvider(),
@@ -39,6 +37,8 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
+
+  
   const MyApp({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
@@ -52,7 +52,7 @@ class MyApp extends StatelessWidget {
     return ScreenUtilInit(
       designSize: ScreenUtil.defaultSize,
       builder: (BuildContext context, _) => MaterialApp(
-        title: 'FT Assessment',
+        title: 'Fatigue Test',
         theme: ThemeData(
           fontFamily: 'Sen',
           brightness: Brightness.light,
@@ -89,8 +89,6 @@ class Route extends StatelessWidget {
       // return const HomePage();
       switch (auth.status) {
         case Authentication.authenticated:
-          // bool masterDataComplete = SpUtil.getBool("MASTER_DATA", defValue: false) ?? false;
-          // return  !masterDataComplete ? AfterLoginScreen(): DashboardScreen();
           return const LandingPage();
         case Authentication.unauthenticated:
           return LoginScreen();

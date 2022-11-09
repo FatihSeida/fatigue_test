@@ -1,6 +1,5 @@
 import 'dart:developer';
 
-import 'package:fatigue_tester/presentation/providers/provider_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:top_snackbar_flutter/custom_snack_bar.dart';
@@ -15,6 +14,7 @@ class RegistrationProvider extends ChangeNotifier {
 
   User? _user;
   static const table = 'user';
+  bool loading = false;
 
   late BuildContext _context;
   final _loadingDialog = LoadingDialog();
@@ -55,9 +55,6 @@ class RegistrationProvider extends ChangeNotifier {
         notifyListeners();
         showMessage(true, 'Data telah terdaftar');
         await setLoading(false);
-      } else {
-        showMessage(false, 'Akun telah terdaftar');
-        setLoading(false);
       }
     } catch (e) {
       log(e.toString());
