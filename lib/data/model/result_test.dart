@@ -8,7 +8,7 @@ class ResultTest extends ChangeNotifier {
     required this.idTest,
     required this.testNumber,
     required this.sleepDate,
-    required this.wakeupTime,
+    required this.wakeupDate,
     required this.dateCreated,
   });
 
@@ -16,7 +16,7 @@ class ResultTest extends ChangeNotifier {
   final int testNumber;
   final int result;
   final DateTime sleepDate;
-  final DateTime wakeupTime;
+  final DateTime wakeupDate;
   final DateTime dateCreated;
   final StatusTest statusTest;
 
@@ -25,8 +25,7 @@ class ResultTest extends ChangeNotifier {
     int? testNumber,
     int? result,
     DateTime? sleepDate,
-    TimeOfDay? sleepTime,
-    DateTime? wakeupTime,
+    DateTime? wakeupDate,
     DateTime? dateCreated,
     StatusTest? statusTest,
   }) =>
@@ -34,7 +33,7 @@ class ResultTest extends ChangeNotifier {
         idTest: idTest ?? this.idTest,
         testNumber: testNumber ?? this.testNumber,
         sleepDate: sleepDate ?? this.sleepDate,
-        wakeupTime: wakeupTime ?? this.wakeupTime,
+        wakeupDate: wakeupDate ?? this.wakeupDate,
         dateCreated: dateCreated ?? this.dateCreated,
         result: result ?? this.result,
         statusTest: this.statusTest,
@@ -44,7 +43,7 @@ class ResultTest extends ChangeNotifier {
         idTest: json["id_test"],
         testNumber: json["test_number"],
         sleepDate: DateTime.tryParse(json["sleep_date"])!,
-        wakeupTime: DateTime.tryParse(json["wakeup_time"])!,
+        wakeupDate: DateTime.tryParse(json["wakeup_date"])!,
         dateCreated: DateTime.tryParse(json["date_created"])!,
         result: json["result_test"],
         statusTest: json["status_test"] == 'notavailable'
@@ -61,7 +60,7 @@ class ResultTest extends ChangeNotifier {
         "test_number": testNumber,
         "result_test": result,
         "sleep_date": sleepDate.toIso8601String(),
-        "wakeup_time": wakeupTime.toIso8601String(),
+        "wakeup_time": wakeupDate.toIso8601String(),
         "date_created": dateCreated.toIso8601String(),
         "status_test": statusTest
       };

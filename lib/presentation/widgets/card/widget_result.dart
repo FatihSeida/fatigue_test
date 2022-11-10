@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:stop_watch_timer/stop_watch_timer.dart';
 
 import '../../../data/common/constant/assets.dart';
 import '../../../data/common/constant/color.dart';
@@ -47,7 +48,8 @@ class ResultWidget extends StatelessWidget {
                         Padding(
                           padding: EdgeInsets.only(top: Insets.xs),
                           child: Text(
-                            Duration(seconds: resultTest.result).toString(),
+                            StopWatchTimer.getDisplayTime(resultTest.result,
+                                hours: true),
                             style:
                                 TextStyles.textXl.copyWith(color: Colors.white),
                           ),
@@ -86,8 +88,8 @@ class ResultWidget extends StatelessWidget {
                       padding:
                           EdgeInsets.only(top: Insets.med, bottom: Insets.med),
                       child: InformationItem(
-                        title: 'Waktu Bangun',
-                        value: DateFormat.Hm().format(resultTest.wakeupTime),
+                        title: 'Waktu Tidur',
+                        value: DateFormat.Hm().format(resultTest.sleepDate),
                       ),
                     ),
                   ],
@@ -108,14 +110,18 @@ class ResultWidget extends StatelessWidget {
                       Padding(
                         padding: EdgeInsets.only(top: Insets.med),
                         child: InformationItem(
-                          title: 'Waktu Tidur',
-                          value: DateFormat.Hm().format(resultTest.sleepDate),
+                          title: 'Tanggal Bangun',
+                          value: DateFormat('EEE, dd MMM yyyy')
+                              .format(resultTest.wakeupDate),
                         ),
                       ),
                       Padding(
                         padding: EdgeInsets.only(
                             top: Insets.med, bottom: Insets.med),
-                        child: InformationItemRed(),
+                        child: InformationItem(
+                          title: 'Waktu Bangun',
+                          value: DateFormat.Hm().format(resultTest.wakeupDate),
+                        ),
                       ),
                     ],
                   ),

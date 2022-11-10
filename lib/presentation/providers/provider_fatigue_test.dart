@@ -29,9 +29,10 @@ class FatigueTestProvider extends ChangeNotifier {
   late bool same = false;
   late BuildContext _context;
 
-  DateTime? selectedDate;
+  DateTime? selectedDateSleep;
   TimeOfDay? selectedTimeSleep;
-  DateTime? selectedTimeWakeUp;
+  DateTime? selectedDateWakeUp;
+  TimeOfDay? selectedTimeWakeUp;
   int? testNumber;
   StatusTest statusTest = StatusTest.notavailable;
 
@@ -42,7 +43,7 @@ class FatigueTestProvider extends ChangeNotifier {
       idTest: 0,
       testNumber: 0,
       sleepDate: DateTime.now(),
-      wakeupTime: DateTime.now(),
+      wakeupDate: DateTime.now(),
       dateCreated: DateTime.now());
 
   final StopWatchTimer stopWatchTimer = StopWatchTimer(
@@ -99,11 +100,13 @@ class FatigueTestProvider extends ChangeNotifier {
       stopWatchTimer.onStopTimer();
       if (eq(comparingItems, shuffleItems) == true) {
         await sendData(
-            nik: user!.nik,
-            sleepDate: selectedDate!,
-            sleepTime: selectedTimeSleep!,
-            swt: stopWatchTimer.rawTime.value,
-            wakeUpTime: selectedTimeWakeUp!);
+          nik: user!.nik,
+          sleepDate: selectedDateSleep!,
+          sleepTime: selectedTimeSleep!,
+          wakeUpDate: selectedDateWakeUp!,
+          wakeUpTime: selectedTimeWakeUp!,
+          swt: stopWatchTimer.rawTime.value,
+        );
         await getData();
         same = true;
         notifyListeners();
@@ -116,26 +119,28 @@ class FatigueTestProvider extends ChangeNotifier {
     }
   }
 
-
-
   Future<void> sendData({
     required int swt,
     required DateTime sleepDate,
     required TimeOfDay sleepTime,
-    required DateTime wakeUpTime,
+    required DateTime wakeUpDate,
+    required TimeOfDay wakeUpTime,
     required String nik,
   }) async {
     try {
       setLoading(true);
-      var dt = DateTime(sleepDate.year, sleepDate.month, sleepDate.day,
+      var dtSleep = DateTime(sleepDate.year, sleepDate.month, sleepDate.day,
           sleepTime.hour, sleepTime.minute);
+      var dtWakeUp = DateTime(wakeUpDate.year, wakeUpDate.month, wakeUpDate.day,
+          wakeUpTime.hour, wakeUpTime.minute);
       var formatter = DateFormat('yyyy-MM-dd HH:mm:ss');
-      String formatted = formatter.format(dt);
+      String formattedSleep = formatter.format(dtSleep);
+      String formattedWakeUp = formatter.format(dtWakeUp);
 
       final Database db = await database;
       await db.insert('test', {
-        'sleep_date': formatted,
-        'wakeup_time': formatter.format(wakeUpTime),
+        'sleep_date': formattedSleep,
+        'wakeup_date': formattedWakeUp,
         'date_created': formatter.format(
           DateTime.now(),
         ),
@@ -167,23 +172,44 @@ class FatigueTestProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> selectDate(BuildContext context) async {
+  Future<void> selectDateSleep(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
         context: context,
         initialDate: DateTime.now(),
         firstDate: DateTime(2015, 8),
         lastDate: DateTime(2101));
     if (picked != null) {
-      selectedDate = picked;
+      selectedDateSleep = picked;
       notifyListeners();
     }
   }
 
-  Future selectTime(BuildContext context) async {
+  Future selectTimeSleep(BuildContext context) async {
     var pickedTime =
         await showTimePicker(context: context, initialTime: TimeOfDay.now());
     if (pickedTime != null) {
       selectedTimeSleep = pickedTime;
+      notifyListeners();
+    }
+  }
+
+  Future<void> selectDateWakeUp(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+        context: context,
+        initialDate: DateTime.now(),
+        firstDate: DateTime(2015, 8),
+        lastDate: DateTime(2101));
+    if (picked != null) {
+      selectedDateWakeUp = picked;
+      notifyListeners();
+    }
+  }
+
+  Future selectTimeWakeUp(BuildContext context) async {
+    var pickedTime =
+        await showTimePicker(context: context, initialTime: TimeOfDay.now());
+    if (pickedTime != null) {
+      selectedTimeWakeUp = pickedTime;
       notifyListeners();
     }
   }

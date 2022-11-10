@@ -26,7 +26,7 @@ class DatabaseSqflite {
           status_test TEXT, 
           test_number INTEGER,
           sleep_date DATETIME,
-          wakeup_time DATETIME,
+          wakeup_date DATETIME,
           date_created DATETIME,
           nik_user TEXT,
           FOREIGN KEY(nik_user) REFERENCES user(nik)

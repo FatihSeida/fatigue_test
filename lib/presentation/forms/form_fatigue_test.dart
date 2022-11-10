@@ -47,11 +47,11 @@ class FatigueTestForm extends StatelessWidget {
               child: PickerButton(
                 title: 'Tanggal',
                 icon: Icon(FatigueTest.calendarOutlilne),
-                value: provider.selectedDate == null
+                value: provider.selectedDateSleep == null
                     ? 'Pilih Tanggal'
                     : DateFormat('dd/MM/yyyy')
-                        .format(provider.selectedDate as DateTime),
-                function: () => provider.selectDate(context),
+                        .format(provider.selectedDateSleep as DateTime),
+                function: () => provider.selectDateSleep(context),
               ),
             ),
             Padding(
@@ -62,7 +62,7 @@ class FatigueTestForm extends StatelessWidget {
                 value: provider.selectedTimeSleep == null
                     ? 'Pilih Waktu'
                     : provider.selectedTimeSleep!.format(context),
-                function: () => provider.selectTime(context),
+                function: () => provider.selectTimeSleep(context),
               ),
             ),
             verticalSpace(Sizes.lg)

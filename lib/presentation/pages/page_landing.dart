@@ -22,7 +22,7 @@ class LandingPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final provider = Provider.of<AuthProvider>(context);
-    Provider.of<FatigueTestProvider>(context).getData();
+    Provider.of<FatigueTestProvider>(context, listen: false).getData();
     return Scaffold(
       drawer: Drawer(
         backgroundColor: Colors.white,
