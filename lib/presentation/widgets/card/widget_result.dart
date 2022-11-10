@@ -22,6 +22,7 @@ class ResultWidget extends StatelessWidget {
     return Container(
       decoration: FTStyle.coloredBorder(),
       child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
         children: [
           Row(
             children: [
@@ -67,6 +68,7 @@ class ResultWidget extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Padding(
@@ -92,11 +94,13 @@ class ResultWidget extends StatelessWidget {
                         value: DateFormat.Hm().format(resultTest.sleepDate),
                       ),
                     ),
+                    const InformationItemRed()
                   ],
                 ),
                 Padding(
                   padding: EdgeInsets.only(right: Insets.xxl),
                   child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Padding(
@@ -116,54 +120,77 @@ class ResultWidget extends StatelessWidget {
                         ),
                       ),
                       Padding(
-                        padding: EdgeInsets.only(
-                            top: Insets.med, bottom: Insets.med),
+                        padding: EdgeInsets.only(top: Insets.med),
                         child: InformationItem(
                           title: 'Waktu Bangun',
                           value: DateFormat.Hm().format(resultTest.wakeupDate),
                         ),
                       ),
+                      resultTest.rateTest == 0
+                          ? const SizedBox.shrink()
+                          : Padding(
+                              padding: EdgeInsets.only(
+                                  top: Insets.med, bottom: Insets.med),
+                              child: InformationItemRed(
+                                title: 'Rata-Rata Waktu',
+                                value: StopWatchTimer.getDisplayTime(
+                                    resultTest.rateTest,
+                                    hours: true),
+                              ),
+                            ),
                     ],
                   ),
                 ),
               ],
             ),
           ),
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: Insets.lg),
-            child: Row(
-              children: [
-                Expanded(
-                  child: Container(
-                    decoration: const BoxDecoration(
-                      borderRadius: BorderRadius.all(Radius.circular(10)),
-                      color: FTColor.red,
-                      image: DecorationImage(
-                          image: AssetImage(Assets.containerBackgroundImage),
-                          fit: BoxFit.cover),
-                    ),
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(vertical: Insets.med),
-                      child: Column(
-                        children: [
-                          Text(
-                            'Status Driver',
-                            style:
-                                TextStyles.text12.copyWith(color: Colors.white),
+          resultTest.statusTest.name == 'notavailable'
+              ? const SizedBox.shrink()
+              : Padding(
+                  padding: EdgeInsets.symmetric(horizontal: Insets.lg),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Container(
+                          decoration: BoxDecoration(
+                            borderRadius:
+                                const BorderRadius.all(Radius.circular(10)),
+                            color: resultTest.statusTest.name == 'buruburu'
+                                ? FTColor.yellow
+                                : resultTest.statusTest.name == 'safe'
+                                    ? FTColor.green
+                                    : FTColor.lightRed,
+                            image: const DecorationImage(
+                                image:
+                                    AssetImage(Assets.containerBackgroundImage),
+                                fit: BoxFit.cover),
                           ),
-                          Text(
-                            resultTest.statusTest.name,
-                            style: TextStyles.text16Bold
-                                .copyWith(color: Colors.white),
-                          )
-                        ],
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(vertical: Insets.med),
+                            child: Column(
+                              children: [
+                                Text(
+                                  'Status Driver',
+                                  style: TextStyles.text12
+                                      .copyWith(color: Colors.white),
+                                ),
+                                Text(
+                                  resultTest.statusTest.name == 'buruburu'
+                                      ? 'Buru-Buru'
+                                      : resultTest.statusTest.name == 'safe'
+                                          ? 'safe'
+                                          : 'unsafe',
+                                  style: TextStyles.text16Bold
+                                      .copyWith(color: Colors.white),
+                                )
+                              ],
+                            ),
+                          ),
+                        ),
                       ),
-                    ),
+                    ],
                   ),
                 ),
-              ],
-            ),
-          ),
           verticalSpace(Sizes.sm)
         ],
       ),

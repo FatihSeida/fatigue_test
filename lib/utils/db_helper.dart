@@ -14,20 +14,18 @@ class DatabaseSqflite {
             name TEXT,
             nik TEXT PRIMARY KEY, 
           unit TEXT,
-          account_type TEXT,
-          rate_test INTEGER, 
-          status_test INTEGER
+          account_type TEXT
           )''',
           );
           await db.execute('''CREATE TABLE test(
           id_test INTEGER PRIMARY KEY AUTOINCREMENT, 
-          rate_test INTEGER, 
-          result_test INTEGER,
-          status_test TEXT, 
           test_number INTEGER,
           sleep_date DATETIME,
           wakeup_date DATETIME,
           date_created DATETIME,
+          result_test INTEGER,
+          rate_test INTEGER, 
+          status_test TEXT,
           nik_user TEXT,
           FOREIGN KEY(nik_user) REFERENCES user(nik)
           )''');

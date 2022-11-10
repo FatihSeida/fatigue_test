@@ -14,7 +14,7 @@ import '../../utils/db_helper.dart';
 import '../widgets/dialog/loading_dialog.dart';
 
 class FatigueTestProvider extends ChangeNotifier {
-  final User? user;
+  User? user;
 
   FatigueTestProvider(this.user);
 
@@ -44,7 +44,10 @@ class FatigueTestProvider extends ChangeNotifier {
       testNumber: 0,
       sleepDate: DateTime.now(),
       wakeupDate: DateTime.now(),
-      dateCreated: DateTime.now());
+      dateCreated: DateTime.now(),
+      rateTest: 0);
+
+  int rateTest = 0;
 
   final StopWatchTimer stopWatchTimer = StopWatchTimer(
     mode: StopWatchMode.countUp,
@@ -57,6 +60,29 @@ class FatigueTestProvider extends ChangeNotifier {
       debugPrint('onEnded');
     },
   );
+
+  void getRateAndStatusTest() {
+    var accumulate = 0;
+    if (resultTest.length + 1 > 9) {
+      for (var i = 0; i < resultTest.length; i++) {
+        accumulate = accumulate + resultTest[i].result;
+      }
+      accumulate = accumulate ~/ resultTest.length;
+      rateTest = accumulate;
+      if (rateTest <= 43000) {
+        statusTest = StatusTest.buruburu;
+      } else if (rateTest >= 43001 && rateTest <= 45000) {
+        statusTest = StatusTest.safe;
+      } else if (rateTest >= 45001) {
+        statusTest = StatusTest.unsafe;
+      } else {
+        statusTest = StatusTest.notavailable;
+      }
+    } else {
+      rateTest = 0;
+      statusTest = StatusTest.notavailable;
+    }
+  }
 
   void initState() {
     stopWatchTimer.fetchStopped
@@ -76,6 +102,13 @@ class FatigueTestProvider extends ChangeNotifier {
   void dispose() async {
     super.dispose();
     await stopWatchTimer.dispose();
+  }
+
+  void clearData() {
+    selectedDateSleep = null;
+    selectedTimeSleep = null;
+    selectedDateWakeUp = null;
+    selectedTimeWakeUp = null;
   }
 
   void onReorder(int oldIndex, int newIndex) {
@@ -109,6 +142,8 @@ class FatigueTestProvider extends ChangeNotifier {
         );
         await getData();
         same = true;
+        stopWatchTimer.onResetTimer();
+        clearData();
         notifyListeners();
         return play;
       }
@@ -136,7 +171,7 @@ class FatigueTestProvider extends ChangeNotifier {
       var formatter = DateFormat('yyyy-MM-dd HH:mm:ss');
       String formattedSleep = formatter.format(dtSleep);
       String formattedWakeUp = formatter.format(dtWakeUp);
-
+      getRateAndStatusTest();
       final Database db = await database;
       await db.insert('test', {
         'sleep_date': formattedSleep,
@@ -146,7 +181,8 @@ class FatigueTestProvider extends ChangeNotifier {
         ),
         'nik_user': nik,
         'result_test': swt,
-        'test_number': resultTest.length,
+        'test_number': resultTest.length + 1,
+        'rate_test': rateTest,
         'status_test': statusTest.name,
       });
       setLoading(false);
@@ -165,7 +201,9 @@ class FatigueTestProvider extends ChangeNotifier {
       var result = List<ResultTest>.generate(
           maps.length, (i) => ResultTest.fromMap(maps[i]));
       resultTest = result;
-      lastResultTest = result[result.length - 1];
+      if (result.isNotEmpty) {
+        lastResultTest = result[result.length - 1];
+      }
       notifyListeners();
     } catch (e) {
       log(e.toString());
@@ -175,9 +213,9 @@ class FatigueTestProvider extends ChangeNotifier {
   Future<void> selectDateSleep(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
         context: context,
-        initialDate: DateTime.now(),
+        initialDate: DateTime.now().subtract(Duration(days: 1)),
         firstDate: DateTime(2015, 8),
-        lastDate: DateTime(2101));
+        lastDate: DateTime.now().subtract(Duration(days: 1)));
     if (picked != null) {
       selectedDateSleep = picked;
       notifyListeners();
@@ -198,7 +236,7 @@ class FatigueTestProvider extends ChangeNotifier {
         context: context,
         initialDate: DateTime.now(),
         firstDate: DateTime(2015, 8),
-        lastDate: DateTime(2101));
+        lastDate: DateTime.now());
     if (picked != null) {
       selectedDateWakeUp = picked;
       notifyListeners();

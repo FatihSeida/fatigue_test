@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 class ResultTest extends ChangeNotifier {
   ResultTest({
+    required this.rateTest,
     required this.statusTest,
     required this.result,
     required this.idTest,
@@ -18,6 +19,7 @@ class ResultTest extends ChangeNotifier {
   final DateTime sleepDate;
   final DateTime wakeupDate;
   final DateTime dateCreated;
+  final int rateTest;
   final StatusTest statusTest;
 
   ResultTest copyWith({
@@ -28,6 +30,7 @@ class ResultTest extends ChangeNotifier {
     DateTime? wakeupDate,
     DateTime? dateCreated,
     StatusTest? statusTest,
+    int? rateTest,
   }) =>
       ResultTest(
         idTest: idTest ?? this.idTest,
@@ -36,7 +39,7 @@ class ResultTest extends ChangeNotifier {
         wakeupDate: wakeupDate ?? this.wakeupDate,
         dateCreated: dateCreated ?? this.dateCreated,
         result: result ?? this.result,
-        statusTest: this.statusTest,
+        statusTest: this.statusTest, rateTest: this.rateTest,
       );
 
   factory ResultTest.fromMap(Map<String, dynamic> json) => ResultTest(
@@ -52,7 +55,7 @@ class ResultTest extends ChangeNotifier {
                 ? StatusTest.unsafe
                 : json["safe"] == 'notavailable'
                     ? StatusTest.safe
-                    : StatusTest.buruburu,
+                    : StatusTest.buruburu, rateTest: json["rate_test"],
       );
 
   Map<String, dynamic> toMap() => {
@@ -62,6 +65,7 @@ class ResultTest extends ChangeNotifier {
         "sleep_date": sleepDate.toIso8601String(),
         "wakeup_time": wakeupDate.toIso8601String(),
         "date_created": dateCreated.toIso8601String(),
-        "status_test": statusTest
+        "status_test": statusTest,
+        "rate_test": rateTest,
       };
 }

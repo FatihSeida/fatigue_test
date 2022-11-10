@@ -28,45 +28,49 @@ class ResultPage extends StatelessWidget {
                 fit: BoxFit.fill)),
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: Insets.xl),
-          child: Column(
-            children: [
-              Padding(
-                padding: EdgeInsets.only(top: 80.h),
-                child: Text(
-                  'Hasil Pengujian',
-                  style: TextStyles.text20Bold.copyWith(color: FTColor.red),
+          child: SingleChildScrollView(
+            physics: ScrollPhysics(),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Padding(
+                  padding: EdgeInsets.only(top: 80.h),
+                  child: Text(
+                    'Hasil Pengujian',
+                    style: TextStyles.text20Bold.copyWith(color: FTColor.red),
+                  ),
                 ),
-              ),
-              Padding(
-                padding: EdgeInsets.only(top: Insets.xl),
-                child: Text(
-                  'Berikut adalah hasil dari pengujian yang sudah dilakukan',
-                  style: TextStyles.text14.copyWith(color: FTColor.grey),
-                  textAlign: TextAlign.center,
+                Padding(
+                  padding: EdgeInsets.only(top: Insets.xl),
+                  child: Text(
+                    'Berikut adalah hasil dari pengujian yang sudah dilakukan',
+                    style: TextStyles.text14.copyWith(color: FTColor.grey),
+                    textAlign: TextAlign.center,
+                  ),
                 ),
-              ),
-              Padding(
-                padding: EdgeInsets.only(top: Insets.xl),
-                child: ResultWidget(
-                  resultTest: provider.lastResultTest,
+                Padding(
+                  padding: EdgeInsets.only(top: Insets.xl),
+                  child: ResultWidget(
+                    resultTest: provider.lastResultTest,
+                  ),
                 ),
-              ),
-              Padding(
-                padding: EdgeInsets.symmetric(
-                    vertical: Insets.xxl, horizontal: Insets.xxl),
-                child: Row(
-                  children: [
-                    ButtonDefault(
-                        title: 'OK',
-                        onTap: () {
-                          Navigator.of(context).pushNamedAndRemoveUntil(
-                              LandingPage.routeName,
-                              (Route<dynamic> route) => false);
-                        }),
-                  ],
-                ),
-              )
-            ],
+                Padding(
+                  padding: EdgeInsets.symmetric(
+                      vertical: Insets.xxl, horizontal: Insets.xxl),
+                  child: Row(
+                    children: [
+                      ButtonDefault(
+                          title: 'OK',
+                          onTap: () {
+                            Navigator.of(context).pushNamedAndRemoveUntil(
+                                LandingPage.routeName,
+                                (Route<dynamic> route) => false);
+                          }),
+                    ],
+                  ),
+                )
+              ],
+            ),
           ),
         ),
       ),

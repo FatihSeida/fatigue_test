@@ -53,7 +53,6 @@ class AuthProvider extends ChangeNotifier {
     loading ? _loadingDialog.show(_context) : _loadingDialog.hide();
   }
 
-
   /// Init
   set context(BuildContext context) => _context = context;
 
@@ -83,6 +82,9 @@ class AuthProvider extends ChangeNotifier {
         setStatus(Authentication.authenticated);
         _user = user;
         Navigator.of(_context).pushNamedAndRemoveUntil("/", (route) => false);
+      } else {
+        setLoading(false);
+        showMessage(false, 'User tidak ditemukan');
       }
     } catch (e) {
       log(e.toString());

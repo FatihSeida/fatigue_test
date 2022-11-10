@@ -28,11 +28,20 @@ class StatusTestWidget extends StatelessWidget {
           Padding(
             padding: EdgeInsets.only(top: 7.h),
             child: Container(
-              decoration: FTStyle.coloredContainer(color: FTColor.red),
+              decoration: FTStyle.coloredContainer(
+                  color: statusTest.name == 'buruburu'
+                      ? FTColor.yellow
+                      : statusTest.name == 'safe'
+                          ? FTColor.green
+                          : FTColor.lightRed),
               child: Padding(
                 padding: EdgeInsets.symmetric(horizontal: Insets.xl),
                 child: Text(
-                  statusTest == StatusTest.unsafe ? 'Unsafe' : 'NA',
+                  statusTest.name == 'buruburu'
+                      ? 'Buru-Buru'
+                      : statusTest.name == 'safe'
+                          ? 'safe'
+                          : 'unsafe',
                   style: TextStyles.text12Bold.copyWith(color: Colors.white),
                 ),
               ),
