@@ -7,4 +7,5 @@ class Assets {
       'assets/images/container_background.png';
   static const logo = 'assets/images/logo.png';
   static const loading = 'assets/images/loading.gif';
+  static const logoSvg = 'assets/images/logo.svg';
 }

@@ -24,7 +24,7 @@ class FatigueTestProvider extends ChangeNotifier {
   final items = List<int>.generate(20, (index) => index);
   final isHours = true;
   final _loadingDialog = LoadingDialog();
-  var play = true;
+  var play = false;
   late var shuffleItems = items;
   late bool same = false;
   late BuildContext _context;
@@ -69,11 +69,19 @@ class FatigueTestProvider extends ChangeNotifier {
       }
       accumulate = accumulate ~/ resultTest.length;
       rateTest = accumulate;
-      if (rateTest <= 43000) {
+      statusTest = StatusTest.safe;
+    } else if (resultTest.length + 1 > 10) {
+      for (var i = 0; i < resultTest.length; i++) {
+        accumulate = accumulate + resultTest[i].result;
+      }
+      accumulate = accumulate ~/ resultTest.length;
+      rateTest = accumulate;
+      if (rateTest <= resultTest[9].rateTest - 2000) {
         statusTest = StatusTest.buruburu;
-      } else if (rateTest >= 43001 && rateTest <= 45000) {
+      } else if (rateTest >= resultTest[9].rateTest - 1999 &&
+          rateTest <= resultTest[9].rateTest + 1999) {
         statusTest = StatusTest.safe;
-      } else if (rateTest >= 45001) {
+      } else if (rateTest >= resultTest[9].rateTest + 2000) {
         statusTest = StatusTest.unsafe;
       } else {
         statusTest = StatusTest.notavailable;
@@ -122,13 +130,12 @@ class FatigueTestProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<bool> startStopWatch() async {
-    if (play == true) {
+  Future<void> startStopWatch() async {
+    if (play == false) {
       setItems();
       stopWatchTimer.onStartTimer();
-      play = false;
+      play = true;
       notifyListeners();
-      return play;
     } else {
       stopWatchTimer.onStopTimer();
       if (eq(comparingItems, shuffleItems) == true) {
@@ -144,14 +151,20 @@ class FatigueTestProvider extends ChangeNotifier {
         same = true;
         stopWatchTimer.onResetTimer();
         clearData();
+        play = false;
         notifyListeners();
-        return play;
       }
-      play = true;
+      play = false;
       stopWatchTimer.onResetTimer();
       notifyListeners();
-      return play;
     }
+  }
+
+  void resetTime() {
+    stopWatchTimer.onStopTimer();
+    stopWatchTimer.onResetTimer();
+    play = false;
+    notifyListeners();
   }
 
   Future<void> sendData({

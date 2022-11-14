@@ -25,6 +25,12 @@ class RegistrationProvider extends ChangeNotifier {
 
   User? get user => _user;
 
+  void clearData() {
+    usernameController.text = '';
+    nikController.text = '';
+    unitController.text = '';
+  }
+
   Future<void> setLoading(bool loading) async {
     loading ? _loadingDialog.show(_context) : _loadingDialog.hide();
   }
@@ -53,11 +59,13 @@ class RegistrationProvider extends ChangeNotifier {
           await db.insert('user', {'name': name, 'nik': nik, 'unit': unit});
       if (res != 0) {
         notifyListeners();
-        showMessage(true, 'Data telah terdaftar');
+        showMessage(true, 'Akun telah terdaftar');
         await setLoading(false);
       }
     } catch (e) {
       log(e.toString());
+      showMessage(false, 'Pendaftaran gagal, Akun sudah tersedia');
+      await setLoading(false);
       rethrow;
     }
   }

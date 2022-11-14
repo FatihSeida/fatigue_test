@@ -4,8 +4,10 @@ import 'package:fatigue_tester/presentation/providers/provider_register.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 
+import '../../data/common/constant/assets.dart';
 import '../../data/common/constant/color.dart';
 import '../../data/common/constant/styles.dart';
 
@@ -37,7 +39,7 @@ class RegistrationPage extends StatelessWidget {
               children: [
                 Padding(
                   padding: EdgeInsets.only(top: 60.h),
-                  child: Image.asset('assets/images/logo.png'),
+                  child: SvgPicture.asset(Assets.logoSvg, height: 40.h),
                 ),
                 Padding(
                   padding: EdgeInsets.only(top: Insets.xl),
@@ -96,6 +98,7 @@ class RegistrationPage extends StatelessWidget {
                       style: TextStyles.text12Bold.copyWith(color: FTColor.red),
                       recognizer: TapGestureRecognizer()
                         ..onTap = () {
+                          provider.clearData();
                           Navigator.of(context).pop();
                         },
                     ),

@@ -118,22 +118,27 @@ class _FatigueTestForm3State extends State<FatigueTestForm3> {
             Padding(
                 padding: EdgeInsets.only(top: Insets.med),
                 child: ReorderableGridView.extent(
+                  physics: const NeverScrollableScrollPhysics(),
                   onReorder: provider.onReorder,
                   shrinkWrap: true,
                   maxCrossAxisExtent: 100,
                   childAspectRatio: 1,
                   children: provider.shuffleItems.map((item) {
-                    return Padding(
+                    return ReorderableGridDragStartListener(
                       key: ValueKey(item),
-                      padding: const EdgeInsets.all(5),
-                      child: Container(
-                        decoration: FTStyle.coloredBorder(),
-                        child: Padding(
-                          padding: EdgeInsets.all(Insets.med),
-                          child: Center(
-                            child: Text(
-                              "${item + 1}",
-                              style: TextStyles.text20Bold,
+                      index: item,
+                      child: Padding(
+                        key: ValueKey(item),
+                        padding: const EdgeInsets.all(5),
+                        child: Container(
+                          decoration: FTStyle.coloredBorder(),
+                          child: Padding(
+                            padding: EdgeInsets.all(Insets.med),
+                            child: Center(
+                              child: Text(
+                                "${item + 1}",
+                                style: TextStyles.text20Bold,
+                              ),
                             ),
                           ),
                         ),
@@ -152,15 +157,16 @@ class _FatigueTestForm3State extends State<FatigueTestForm3> {
                     padding: const EdgeInsets.symmetric(horizontal: 4),
                     child: ElevatedButton(
                       onPressed: () async {
-                        await provider.startStopWatch().then((_) {
-                          if (!mounted) {
-                            return;
-                          }
-                          if (provider.play == false && provider.same == true) {
-                            Navigator.of(context)
-                                .pushNamed(ResultPage.routeName);
-                          }
-                        });
+                        await provider.startStopWatch();
+                        // .then((_) {
+                        //   if (!mounted) {
+                        //     return;
+                        //   }
+                        //   if (provider.play == false && provider.same == true) {
+                        //     Navigator.of(context)
+                        //         .pushNamed(ResultPage.routeName);
+                        //   }
+                        // });
                       },
                       style: ElevatedButton.styleFrom(
                         shape: CircleBorder(),
@@ -168,9 +174,24 @@ class _FatigueTestForm3State extends State<FatigueTestForm3> {
                         backgroundColor: FTColor.red, // <-- Button color
                         foregroundColor: Colors.white, // <-- Splash color
                       ),
-                      child: Icon(provider.play == true
+                      child: Icon(provider.play == false
                           ? Icons.play_arrow
                           : Icons.pause),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 4),
+                    child: ElevatedButton(
+                      onPressed: () {
+                        provider.resetTime();
+                      },
+                      style: ElevatedButton.styleFrom(
+                        shape: CircleBorder(),
+                        padding: EdgeInsets.all(20),
+                        backgroundColor: FTColor.red, // <-- Button color
+                        foregroundColor: Colors.white, // <-- Splash color
+                      ),
+                      child: Icon(Icons.stop),
                     ),
                   ),
                 ],

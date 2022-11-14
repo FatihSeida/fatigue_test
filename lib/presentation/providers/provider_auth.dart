@@ -39,6 +39,11 @@ class AuthProvider extends ChangeNotifier {
   TextEditingController usernameController = TextEditingController();
   TextEditingController nikController = TextEditingController();
 
+  void clearData() {
+    usernameController.text = '';
+    nikController.text = '';
+  }
+
   Future<void> setStatus(Authentication auth) async {
     _status = auth;
     notifyListeners();

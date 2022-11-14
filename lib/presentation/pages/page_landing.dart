@@ -7,13 +7,13 @@ import 'package:fatigue_tester/presentation/widgets/button/button_default.dart';
 import 'package:fatigue_tester/presentation/widgets/etc/widget_appbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 
 import '../../data/common/constant/assets.dart';
 import '../../data/common/constant/authentication.dart';
 import '../../data/common/constant/color.dart';
 import '../../data/common/constant/styles.dart';
-import '../widgets/etc/logo_widget.dart';
 
 class LandingPage extends StatelessWidget {
   static const routeName = '/landing';
@@ -134,7 +134,7 @@ class LandingPage extends StatelessWidget {
         ),
       ),
       appBar: FTAppBar(
-        title: const LogoWidget(),
+        title: SvgPicture.asset(Assets.logoSvg, height: 40.h),
         leading: Builder(
           builder: (context) => IconButton(
               onPressed: () => Scaffold.of(context).openDrawer(),

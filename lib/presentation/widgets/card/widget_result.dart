@@ -127,7 +127,10 @@ class ResultWidget extends StatelessWidget {
                         ),
                       ),
                       resultTest.rateTest == 0
-                          ? const SizedBox.shrink()
+                          ? Padding(
+                              padding: EdgeInsets.only(top: Insets.med),
+                              child: const InformationItemRed(),
+                            )
                           : Padding(
                               padding: EdgeInsets.only(
                                   top: Insets.med, bottom: Insets.med),
