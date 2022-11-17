@@ -1,10 +1,14 @@
 import 'dart:developer';
+import 'dart:io';
 
 import 'package:collection/collection.dart';
+import 'package:csv/csv.dart';
+import 'package:external_path/external_path.dart';
 import 'package:fatigue_tester/data/model/result_test.dart';
 
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:stop_watch_timer/stop_watch_timer.dart';
 
@@ -16,9 +20,7 @@ import '../widgets/dialog/loading_dialog.dart';
 class FatigueTestProvider extends ChangeNotifier {
   User? user;
 
-  FatigueTestProvider(this.user) {
-    initData();
-  }
+  FatigueTestProvider(this.user);
 
   final database = DatabaseSqflite().openDB();
   User userDriver = User(name: '', nik: '', unit: '');
@@ -126,6 +128,58 @@ class FatigueTestProvider extends ChangeNotifier {
         .listen((value) => debugPrint('countdown stopped from stream'));
     countdown.fetchEnded
         .listen((value) => debugPrint('countdown ended from stream'));
+  }
+
+  Future<void> getCsv() async {
+    Map<Permission, PermissionStatus> statuses = await [
+      Permission.storage,
+    ].request();
+
+    List<List<dynamic>> rows = [];
+    List<dynamic> row = [];
+
+    row.add("id_test");
+    row.add("name");
+    row.add("nik_user");
+    row.add("test_number");
+    row.add("sleep_date");
+    row.add("wakeup_date");
+    row.add("result_test");
+    row.add("rate_test");
+    row.add("status_test");
+    row.add("date_created");
+    rows.add(row);
+
+    for (var i = 0; i < resultTest.length; i++) {
+      List<dynamic> row = [];
+      var userr = listUser
+          .singleWhere((element) => element.nik == resultTest[i].nikDriver);
+
+      row.add(resultTest[i].idTest);
+      row.add(userr.name);
+      row.add(userr.nik);
+      row.add(resultTest[i].testNumber);
+      row.add(resultTest[i].sleepDate);
+      row.add(resultTest[i].wakeupDate);
+      row.add(resultTest[i].result);
+      row.add(resultTest[i].rateTest);
+      row.add(resultTest[i].statusTest);
+      row.add(resultTest[i].dateCreated);
+      rows.add(row);
+
+      String csv = const ListToCsvConverter().convert(rows);
+      String dir = await ExternalPath.getExternalStoragePublicDirectory(
+          ExternalPath.DIRECTORY_DOWNLOADS);
+      debugPrint(dir);
+
+      String pathDoc = await ExternalPath.getExternalStoragePublicDirectory(
+          ExternalPath.DIRECTORY_DOCUMENTS);
+      debugPrint(pathDoc);
+      String file = "$dir";
+      File f = File(file + "/filename.csv");
+
+      f.writeAsString(csv);
+    }
   }
 
   Future<void> initData() async {
@@ -284,20 +338,18 @@ class FatigueTestProvider extends ChangeNotifier {
     }
   }
 
-  Future<User> getUserDetailData(String nik) async {
-    try {
-      for (int i = 0; i < listUser.length; i++) {
-        if (listUser.elementAt(i).nik == nik) {
-          userDriver = listUser[i];
-          return userDriver;
-        }
-      }
-      return userDriver;
-    } catch (e) {
-      log(e.toString());
-      rethrow;
-    }
-  }
+  // Future<void> getUserDetailData(String nik) async {
+  //   try {
+  //     for (int i = 0; i < listUser.length; i++) {
+  //       if (listUser.elementAt(i).nik == nik) {
+  //         userDriver = listUser[i];
+  //       }
+  //     }
+  //   } catch (e) {
+  //     log(e.toString());
+  //     rethrow;
+  //   }
+  // }
 
   Future<void> deleteData(String nik, int testNumber) async {
     try {

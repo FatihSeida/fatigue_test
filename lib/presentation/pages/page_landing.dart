@@ -1,11 +1,13 @@
 import 'package:fatigue_tester/data/common/constant/fatigue_test_icons.dart';
 import 'package:fatigue_tester/data/common/enum/enum_status_test.dart';
 import 'package:fatigue_tester/data/model/result_test.dart';
+import 'package:fatigue_tester/presentation/pages/page_detail_result.dart';
 import 'package:fatigue_tester/presentation/pages/page_fatigue_test.dart';
 import 'package:fatigue_tester/presentation/pages/page_history_test.dart';
 import 'package:fatigue_tester/presentation/providers/provider_auth.dart';
 import 'package:fatigue_tester/presentation/providers/provider_fatigue_test.dart';
 import 'package:fatigue_tester/presentation/widgets/button/button_default.dart';
+import 'package:fatigue_tester/presentation/widgets/card/widget_driver_result.dart';
 import 'package:fatigue_tester/presentation/widgets/etc/widget_appbar.dart';
 import 'package:fatigue_tester/presentation/widgets/text/widget_information_item.dart';
 import 'package:flutter/material.dart';
@@ -28,128 +30,128 @@ class LandingPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final provider = Provider.of<AuthProvider>(context);
-    Provider.of<FatigueTestProvider>(context, listen: false).getData();
+    Provider.of<FatigueTestProvider>(context, listen: false).initData();
     return Scaffold(
-      drawer: Drawer(
-        backgroundColor: Colors.white,
-        // Add a ListView to the drawer. This ensures the user can scroll
-        // through the options in the drawer if there isn't enough vertical
-        // space to fit everything.
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          // Important: Remove any padding from the ListView
-          children: [
-            Column(
-              children: [
-                Container(
-                  width: MediaQuery.of(context).size.width * 1,
-                  decoration: const BoxDecoration(
-                    image: DecorationImage(
-                        alignment: Alignment.topCenter,
-                        image: AssetImage(Assets.containerBackgroundImage),
-                        fit: BoxFit.fitWidth),
-                  ),
-                  child: Column(
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.only(top: Insets.xxl),
-                        child: CircleAvatar(
-                          maxRadius: 40.h,
-                          backgroundImage: const AssetImage(
-                              'assets/images/profile_avatar.png'),
-                        ),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.only(top: Insets.lg),
-                        child: Text(
-                          provider.user!.name,
-                          style: TextStyles.text20Bold,
-                        ),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.only(top: Insets.sm),
-                        child: Text(
-                          provider.user!.unit,
-                          style:
-                              TextStyles.text12.copyWith(color: FTColor.grey),
-                        ),
-                      )
-                    ],
-                  ),
-                ),
-                verticalSpace(Sizes.med),
-                provider.user!.unit == 'Head Office'
-                    ? Padding(
-                        padding: EdgeInsets.symmetric(horizontal: Insets.lg),
-                        child: ListTile(
-                          leading:
-                              const Icon(Icons.download, color: FTColor.red),
-                          title: Text(
-                            'Unduh Data',
-                            style: TextStyles.text14Bold,
-                          ),
-                          onTap: () {},
-                        ),
-                      )
-                    : Padding(
-                        padding: EdgeInsets.symmetric(horizontal: Insets.lg),
-                        child: ListTile(
-                          leading: const Icon(FatigueTest.listAlt,
-                              color: FTColor.red),
-                          title: Text(
-                            'Riwayat Pengujian',
-                            style: TextStyles.text14Bold,
-                          ),
-                          onTap: () {
-                            Navigator.of(context)
-                                .pushNamed(HistoryTestPage.routeName);
-                          },
-                        ),
-                      ),
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: Insets.lg),
-                  child: ListTile(
-                    leading:
-                        const Icon(FatigueTest.helpDesk, color: FTColor.red),
-                    title: Text(
-                      'Bantuan',
-                      style: TextStyles.text14Bold,
+      drawer: Consumer<FatigueTestProvider>(
+        builder: (_, ftProvider, __) => Drawer(
+          backgroundColor: Colors.white,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Column(
+                children: [
+                  Container(
+                    width: MediaQuery.of(context).size.width * 1,
+                    decoration: const BoxDecoration(
+                      image: DecorationImage(
+                          alignment: Alignment.topCenter,
+                          image: AssetImage(Assets.containerBackgroundImage),
+                          fit: BoxFit.fitWidth),
                     ),
-                    onTap: () {},
-                  ),
-                ),
-              ],
-            ),
-            Row(
-              children: [
-                Expanded(
-                  child: InkWell(
-                    onTap: () {
-                      context
-                          .read<AuthProvider>()
-                          .setStatus(Authentication.unauthenticated);
-                      Navigator.of(context)
-                          .pushNamedAndRemoveUntil("/", (route) => false);
-                    },
-                    child: Container(
-                      decoration: const BoxDecoration(color: FTColor.red),
-                      child: Padding(
-                        padding: EdgeInsets.symmetric(
-                            vertical: Insets.lg, horizontal: Insets.xl),
-                        child: Center(
+                    child: Column(
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.only(top: Insets.xxl),
+                          child: CircleAvatar(
+                            maxRadius: 40.h,
+                            backgroundImage: const AssetImage(
+                                'assets/images/profile_avatar.png'),
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.only(top: Insets.lg),
                           child: Text(
-                            'Keluar',
-                            style: TextStyles.text14Bold
-                                .copyWith(color: Colors.white),
+                            provider.user!.name,
+                            style: TextStyles.text20Bold,
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.only(top: Insets.sm),
+                          child: Text(
+                            provider.user!.unit,
+                            style:
+                                TextStyles.text12.copyWith(color: FTColor.grey),
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+                  verticalSpace(Sizes.med),
+                  provider.user!.unit == 'Head Office'
+                      ? Padding(
+                          padding: EdgeInsets.symmetric(horizontal: Insets.lg),
+                          child: ListTile(
+                            leading:
+                                const Icon(Icons.download, color: FTColor.red),
+                            title: Text(
+                              'Unduh Data',
+                              style: TextStyles.text14Bold,
+                            ),
+                            onTap: () {
+                              ftProvider.getCsv();
+                            },
+                          ),
+                        )
+                      : Padding(
+                          padding: EdgeInsets.symmetric(horizontal: Insets.lg),
+                          child: ListTile(
+                            leading: const Icon(FatigueTest.listAlt,
+                                color: FTColor.red),
+                            title: Text(
+                              'Riwayat Pengujian',
+                              style: TextStyles.text14Bold,
+                            ),
+                            onTap: () {
+                              Navigator.of(context)
+                                  .pushNamed(HistoryTestPage.routeName);
+                            },
+                          ),
+                        ),
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: Insets.lg),
+                    child: ListTile(
+                      leading:
+                          const Icon(FatigueTest.helpDesk, color: FTColor.red),
+                      title: Text(
+                        'Bantuan',
+                        style: TextStyles.text14Bold,
+                      ),
+                      onTap: () {},
+                    ),
+                  ),
+                ],
+              ),
+              Row(
+                children: [
+                  Expanded(
+                    child: InkWell(
+                      onTap: () {
+                        context
+                            .read<AuthProvider>()
+                            .setStatus(Authentication.unauthenticated);
+                        Navigator.of(context)
+                            .pushNamedAndRemoveUntil("/", (route) => false);
+                      },
+                      child: Container(
+                        decoration: const BoxDecoration(color: FTColor.red),
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(
+                              vertical: Insets.lg, horizontal: Insets.xl),
+                          child: Center(
+                            child: Text(
+                              'Keluar',
+                              style: TextStyles.text14Bold
+                                  .copyWith(color: Colors.white),
+                            ),
                           ),
                         ),
                       ),
                     ),
                   ),
-                ),
-              ],
-            ),
-          ],
+                ],
+              ),
+            ],
+          ),
         ),
       ),
       appBar: FTAppBar(
@@ -167,10 +169,8 @@ class LandingPage extends StatelessWidget {
             : [],
       ),
       body: SingleChildScrollView(
-        physics: ScrollPhysics(),
-        child: Builder(builder: (context) {
-          context.read<AuthProvider>().context = context;
-          return Padding(
+          physics: ScrollPhysics(),
+          child: Padding(
             padding: EdgeInsets.symmetric(horizontal: Insets.xl),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -250,11 +250,14 @@ class LandingPage extends StatelessWidget {
                             ListView.builder(
                               shrinkWrap: true,
                               itemBuilder: (context, index) {
-                                return FutureBuilder<User>(
-                                  future: ftProvider.getUserDetailData(
-                                      ftProvider.resultTest[index].nikDriver),
-                                  builder: (context, snapshot) => DriverResult(
-                                    user: snapshot.data!,
+                                return Padding(
+                                  padding: EdgeInsets.only(top: Insets.med),
+                                  child: DriverResult(
+                                    user: ftProvider.listUser.singleWhere(
+                                        (element) =>
+                                            element.nik ==
+                                            ftProvider
+                                                .resultTest[index].nikDriver),
                                     resultTest: ftProvider.resultTest[index],
                                   ),
                                 );
@@ -316,9 +319,7 @@ class LandingPage extends StatelessWidget {
                       ),
               ],
             ),
-          );
-        }),
-      ),
+          )),
     );
   }
 }
@@ -405,7 +406,12 @@ class DriverResult extends StatelessWidget {
                                   BorderRadius.circular(10), // <-- Radius
                             ),
                           ),
-                          onPressed: () {},
+                          onPressed: () {
+                            Navigator.of(context).pushNamed(
+                              DetailResultPage.routeName,
+                              arguments: {'test': resultTest, 'user': user},
+                            );
+                          },
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [

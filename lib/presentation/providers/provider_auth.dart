@@ -74,7 +74,7 @@ class AuthProvider extends ChangeNotifier {
     );
   }
 
-  Future<void> getUser(String name, String nik) async {
+  Future<bool> getUser(String name, String nik) async {
     try {
       setLoading(true);
       Database db = await database;
@@ -86,10 +86,11 @@ class AuthProvider extends ChangeNotifier {
         setLoading(false);
         setStatus(Authentication.authenticated);
         _user = user;
-        Navigator.of(_context).pushNamedAndRemoveUntil("/", (route) => false);
+        return true;
       } else {
         setLoading(false);
         showMessage(false, 'User tidak ditemukan');
+        return false;
       }
     } catch (e) {
       log(e.toString());

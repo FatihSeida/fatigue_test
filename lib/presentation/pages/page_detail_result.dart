@@ -1,4 +1,4 @@
-import 'package:fatigue_tester/presentation/widgets/card/widget_result.dart';
+import 'package:fatigue_tester/presentation/widgets/card/widget_driver_result.dart';
 import 'package:flutter/material.dart';
 
 import '../../data/common/constant/color.dart';
@@ -9,9 +9,11 @@ class DetailResultPage extends StatelessWidget {
   static const routeName = '/detail-result';
   const DetailResultPage({Key? key}) : super(key: key);
 
+  
+
   @override
   Widget build(BuildContext context) {
-    // final completeVesselProvider = Provider.of<CompleteVesselProvider>(context);
+    final arguments = (ModalRoute.of(context)?.settings.arguments ?? <String, dynamic>{}) as Map;
     return Scaffold(
         appBar: FTAppBar(
           title: Text(
@@ -21,17 +23,17 @@ class DetailResultPage extends StatelessWidget {
         ),
         body: Column(
           children: [
-            // Expanded(
-            //   child: Padding(
-            //     padding: EdgeInsets.symmetric(
-            //         horizontal: Insets.xl, vertical: Insets.xxl),
-            //     child: Column(
-            //       children: const [
-            //         ResultWidget(),
-            //       ],
-            //     ),
-            //   ),
-            // ),
+            Expanded(
+              child: Padding(
+                padding: EdgeInsets.symmetric(
+                    horizontal: Insets.xl, vertical: Insets.xxl),
+                child: Column(
+                  children: [
+                    DriverResultDetailWidget(resultTes: arguments['test'],user: arguments['user'],)
+                  ],
+                ),
+              ),
+            ),
             Container(
               decoration: const BoxDecoration(
                 color: FTColor.red,
