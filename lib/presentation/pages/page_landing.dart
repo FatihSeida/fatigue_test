@@ -250,11 +250,13 @@ class LandingPage extends StatelessWidget {
                             ListView.builder(
                               shrinkWrap: true,
                               itemBuilder: (context, index) {
-                                ftProvider.getUserData();
-                                return DriverResult(
-                                  user: ftProvider.getUserDetailData(
+                                return FutureBuilder<User>(
+                                  future: ftProvider.getUserDetailData(
                                       ftProvider.resultTest[index].nikDriver),
-                                  resultTest: ftProvider.resultTest[index],
+                                  builder: (context, snapshot) => DriverResult(
+                                    user: snapshot.data!,
+                                    resultTest: ftProvider.resultTest[index],
+                                  ),
                                 );
                               },
                               itemCount: ftProvider.resultTest.length,

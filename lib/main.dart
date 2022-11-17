@@ -28,6 +28,7 @@ void main() {
         update: (ctx, auth, user) => RegistrationProvider(),
       ),
       ChangeNotifierProxyProvider<AuthProvider, FatigueTestProvider>(
+        lazy: true,
         create: (context) => FatigueTestProvider(null),
         update: (ctx, auth, user) => FatigueTestProvider(auth.user),
       ),

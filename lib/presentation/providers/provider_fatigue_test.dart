@@ -16,7 +16,9 @@ import '../widgets/dialog/loading_dialog.dart';
 class FatigueTestProvider extends ChangeNotifier {
   User? user;
 
-  FatigueTestProvider(this.user);
+  FatigueTestProvider(this.user) {
+    initData();
+  }
 
   final database = DatabaseSqflite().openDB();
   User userDriver = User(name: '', nik: '', unit: '');
@@ -124,6 +126,12 @@ class FatigueTestProvider extends ChangeNotifier {
         .listen((value) => debugPrint('countdown stopped from stream'));
     countdown.fetchEnded
         .listen((value) => debugPrint('countdown ended from stream'));
+  }
+
+  Future<void> initData() async {
+    await getData();
+    await getUserData();
+    notifyListeners();
   }
 
   Future<void> setLoading(bool loading) async {
@@ -276,12 +284,11 @@ class FatigueTestProvider extends ChangeNotifier {
     }
   }
 
-  User getUserDetailData(String nik) {
+  Future<User> getUserDetailData(String nik) async {
     try {
       for (int i = 0; i < listUser.length; i++) {
-        if (listUser.elementAt(i) == nik) {
+        if (listUser.elementAt(i).nik == nik) {
           userDriver = listUser[i];
-          notifyListeners();
           return userDriver;
         }
       }
