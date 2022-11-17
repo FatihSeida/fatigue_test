@@ -23,6 +23,11 @@ class RegistrationProvider extends ChangeNotifier {
   TextEditingController nikController = TextEditingController();
   TextEditingController unitController = TextEditingController();
 
+  List<String> unit = ['Head Office', 'Operasional'];
+
+  String? remarkValue;
+  String value = 'Head Office';
+
   User? get user => _user;
 
   void clearData() {
@@ -51,12 +56,17 @@ class RegistrationProvider extends ChangeNotifier {
     );
   }
 
+  void changeTerminalRemarkValue(String value) {
+    remarkValue = value;
+    notifyListeners();
+  }
+
   Future<void> register(String name, String nik, String unit) async {
     try {
       await setLoading(true);
       final Database db = await database;
-      var res =
-          await db.insert('user', {'name': name, 'nik': nik, 'unit': unit});
+      var res = await db
+          .insert('user', {'name': name, 'nik': nik, 'unit': remarkValue});
       if (res != 0) {
         notifyListeners();
         showMessage(true, 'Akun telah terdaftar');

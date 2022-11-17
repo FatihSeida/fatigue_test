@@ -1,19 +1,25 @@
 import 'package:fatigue_tester/data/common/constant/fatigue_test_icons.dart';
+import 'package:fatigue_tester/data/common/enum/enum_status_test.dart';
+import 'package:fatigue_tester/data/model/result_test.dart';
 import 'package:fatigue_tester/presentation/pages/page_fatigue_test.dart';
 import 'package:fatigue_tester/presentation/pages/page_history_test.dart';
 import 'package:fatigue_tester/presentation/providers/provider_auth.dart';
 import 'package:fatigue_tester/presentation/providers/provider_fatigue_test.dart';
 import 'package:fatigue_tester/presentation/widgets/button/button_default.dart';
 import 'package:fatigue_tester/presentation/widgets/etc/widget_appbar.dart';
+import 'package:fatigue_tester/presentation/widgets/text/widget_information_item.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 import '../../data/common/constant/assets.dart';
 import '../../data/common/constant/authentication.dart';
 import '../../data/common/constant/color.dart';
 import '../../data/common/constant/styles.dart';
+import '../../data/model/user.dart';
+import '../widgets/text/widget_status_driver.dart';
 
 class LandingPage extends StatelessWidget {
   static const routeName = '/landing';
@@ -72,21 +78,34 @@ class LandingPage extends StatelessWidget {
                   ),
                 ),
                 verticalSpace(Sizes.med),
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: Insets.lg),
-                  child: ListTile(
-                    leading:
-                        const Icon(FatigueTest.listAlt, color: FTColor.red),
-                    title: Text(
-                      'Riwayat Pengujian',
-                      style: TextStyles.text14Bold,
-                    ),
-                    onTap: () {
-                      Navigator.of(context)
-                          .pushNamed(HistoryTestPage.routeName);
-                    },
-                  ),
-                ),
+                provider.user!.unit == 'Head Office'
+                    ? Padding(
+                        padding: EdgeInsets.symmetric(horizontal: Insets.lg),
+                        child: ListTile(
+                          leading:
+                              const Icon(Icons.download, color: FTColor.red),
+                          title: Text(
+                            'Unduh Data',
+                            style: TextStyles.text14Bold,
+                          ),
+                          onTap: () {},
+                        ),
+                      )
+                    : Padding(
+                        padding: EdgeInsets.symmetric(horizontal: Insets.lg),
+                        child: ListTile(
+                          leading: const Icon(FatigueTest.listAlt,
+                              color: FTColor.red),
+                          title: Text(
+                            'Riwayat Pengujian',
+                            style: TextStyles.text14Bold,
+                          ),
+                          onTap: () {
+                            Navigator.of(context)
+                                .pushNamed(HistoryTestPage.routeName);
+                          },
+                        ),
+                      ),
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: Insets.lg),
                   child: ListTile(
@@ -134,7 +153,7 @@ class LandingPage extends StatelessWidget {
         ),
       ),
       appBar: FTAppBar(
-        title: SvgPicture.asset(Assets.logoSvg, height: 40.h),
+        title: Image.asset(Assets.logo, height: 40.h),
         leading: Builder(
           builder: (context) => IconButton(
               onPressed: () => Scaffold.of(context).openDrawer(),
@@ -143,110 +162,257 @@ class LandingPage extends StatelessWidget {
                 color: Colors.black,
               )),
         ),
+        actions: provider.user!.unit == 'Head Office'
+            ? [IconButton(onPressed: () {}, icon: Icon(FatigueTest.filter))]
+            : [],
       ),
-      body: Padding(
-        padding: EdgeInsets.symmetric(horizontal: Insets.xl),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
-              padding: EdgeInsets.only(top: Insets.xl),
-              child: Text(
-                'Hi, Selamat Datang',
-                style: TextStyles.text16Bold,
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.only(top: Insets.xs),
-              child: Text(
-                provider.user!.name,
-                style: TextStyles.text14.copyWith(color: FTColor.grey),
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.only(top: Insets.xl),
-              child: Container(
-                decoration: FTStyle.coloredBorder().copyWith(
-                    image: const DecorationImage(
-                        image: AssetImage(Assets.containerBackgroundImage),
-                        fit: BoxFit.cover)),
-                child: Padding(
-                  padding: EdgeInsets.all(Insets.xl),
-                  child: Row(
-                    children: [
-                      Image.asset(
-                        Assets.avatarHelper,
-                        height: 82.h,
-                      ),
-                      Expanded(
-                        child: Padding(
-                          padding: EdgeInsets.only(left: Insets.xl),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                'Utamakan keselamatan dalam bekerja',
-                                style: TextStyles.text16Bold
-                                    .copyWith(color: FTColor.red),
+      body: SingleChildScrollView(
+        physics: ScrollPhysics(),
+        child: Builder(builder: (context) {
+          context.read<AuthProvider>().context = context;
+          return Padding(
+            padding: EdgeInsets.symmetric(horizontal: Insets.xl),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: EdgeInsets.only(top: Insets.xl),
+                  child: Text(
+                    'Hi, Selamat Datang',
+                    style: TextStyles.text16Bold,
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.only(top: Insets.xs),
+                  child: Text(
+                    provider.user!.name,
+                    style: TextStyles.text14.copyWith(color: FTColor.grey),
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.only(top: Insets.xl),
+                  child: Container(
+                    decoration: FTStyle.coloredBorder().copyWith(
+                        image: const DecorationImage(
+                            image: AssetImage(Assets.containerBackgroundImage),
+                            fit: BoxFit.cover)),
+                    child: Padding(
+                      padding: EdgeInsets.all(Insets.xl),
+                      child: Row(
+                        children: [
+                          Image.asset(
+                            Assets.avatarHelper,
+                            height: 82.h,
+                          ),
+                          Expanded(
+                            child: Padding(
+                              padding: EdgeInsets.only(left: Insets.xl),
+                              child: Column(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    'Utamakan keselamatan dalam bekerja',
+                                    style: TextStyles.text16Bold
+                                        .copyWith(color: FTColor.red),
+                                  ),
+                                  Padding(
+                                    padding: EdgeInsets.only(top: Insets.med),
+                                    child: Text(
+                                      'Keselamatan dimulai dari diri sendiri',
+                                      style: TextStyles.text12
+                                          .copyWith(color: FTColor.grey),
+                                    ),
+                                  ),
+                                ],
                               ),
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                provider.user!.unit == "Head Office"
+                    ? Consumer<FatigueTestProvider>(
+                        builder: (_, ftProvider, __) => Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Padding(
+                              padding:
+                                  EdgeInsets.symmetric(vertical: Insets.med),
+                              child: Text(
+                                'Daftar Hasil Test Driver',
+                                style: TextStyles.text20Bold,
+                              ),
+                            ),
+                            ListView.builder(
+                              shrinkWrap: true,
+                              itemBuilder: (context, index) {
+                                ftProvider.getUserData();
+                                return DriverResult(
+                                  user: ftProvider.getUserDetailData(
+                                      ftProvider.resultTest[index].nikDriver),
+                                  resultTest: ftProvider.resultTest[index],
+                                );
+                              },
+                              itemCount: ftProvider.resultTest.length,
+                            ),
+                          ],
+                        ),
+                      )
+                    : Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Padding(
+                            padding: EdgeInsets.only(top: Insets.xl),
+                            child: Text(
+                              'Kenapa keselamatan kerja itu penting?',
+                              style: TextStyles.text16Bold,
+                            ),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.only(top: Insets.xl),
+                            child: Text(
+                              'Upaya kita untuk menciptakan lingkungan kerja yang sehat dan aman, sehingga dapat mengurangi porbabilitas kecelakaan kerja / penyakit akibat kelalaian yang mengakibatkan demotivasi dan defisiensi produktifitas kerja.',
+                              style: TextStyles.text14
+                                  .copyWith(color: FTColor.grey),
+                            ),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.only(top: 45.h),
+                            child: Padding(
+                              padding:
+                                  EdgeInsets.symmetric(horizontal: Insets.xxl),
+                              child: Row(
+                                children: [
+                                  ButtonDefault(
+                                      title: 'Mulai Test',
+                                      onTap: () {
+                                        Navigator.of(context).pushNamed(
+                                            FatigueTestPage.routeName);
+                                      }),
+                                ],
+                              ),
+                            ),
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
                               Padding(
-                                padding: EdgeInsets.only(top: Insets.med),
+                                padding: EdgeInsets.only(top: Insets.lg),
                                 child: Text(
-                                  'Keselamatan dimulai dari diri sendiri',
+                                  'Tap tombol mulai, untuk melakukan Fatigue test',
                                   style: TextStyles.text12
                                       .copyWith(color: FTColor.grey),
                                 ),
                               ),
                             ],
-                          ),
-                        ),
-                      )
-                    ],
-                  ),
-                ),
-              ),
+                          )
+                        ],
+                      ),
+              ],
             ),
-            Padding(
-              padding: EdgeInsets.only(top: Insets.xl),
-              child: Text(
-                'Kenapa keselamatan kerja itu penting?',
-                style: TextStyles.text16Bold,
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.only(top: Insets.xl),
-              child: Text(
-                'Upaya kita untuk menciptakan lingkungan kerja yang sehat dan aman, sehingga dapat mengurangi porbabilitas kecelakaan kerja / penyakit akibat kelalaian yang mengakibatkan demotivasi dan defisiensi produktifitas kerja.',
-                style: TextStyles.text14.copyWith(color: FTColor.grey),
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.only(top: 45.h),
-              child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: Insets.xxl),
-                child: Row(
+          );
+        }),
+      ),
+    );
+  }
+}
+
+class DriverResult extends StatelessWidget {
+  const DriverResult({
+    Key? key,
+    required this.user,
+    required this.resultTest,
+  }) : super(key: key);
+
+  final User user;
+  final ResultTest resultTest;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: FTStyle.coloredBorder(),
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: Insets.xl),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    ButtonDefault(
-                        title: 'Mulai Test',
-                        onTap: () {
-                          Navigator.of(context)
-                              .pushNamed(FatigueTestPage.routeName);
-                        }),
+                    Padding(
+                      padding: EdgeInsets.only(
+                        top: Insets.med,
+                      ),
+                      child:
+                          StatusTestWidget(statusTest: resultTest.statusTest),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(
+                        top: Insets.med,
+                      ),
+                      child: InformationItem(
+                          title: 'Tanggal Pengujian',
+                          value: DateFormat('EEE, dd MMM yyyy')
+                              .format(resultTest.dateCreated)),
+                    )
                   ],
                 ),
-              ),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Padding(
-                  padding: EdgeInsets.only(top: Insets.lg),
-                  child: Text(
-                    'Tap tombol mulai, untuk melakukan Fatigue test',
-                    style: TextStyles.text12.copyWith(color: FTColor.grey),
-                  ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.only(
+                        top: Insets.med,
+                      ),
+                      child: InformationItem(
+                          title: 'Nomor Penguji',
+                          value: "${resultTest.testNumber}"),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(
+                        top: Insets.med,
+                      ),
+                      child: InformationItem(
+                          title: 'Nama Driver', value: user.name),
+                    ),
+                  ],
                 ),
               ],
+            ),
+            Padding(
+              padding: EdgeInsets.only(bottom: Insets.med),
+              child: Row(
+                children: [
+                  Expanded(
+                      child: OutlinedButton(
+                          style: OutlinedButton.styleFrom(
+                            backgroundColor: Colors.white,
+                            foregroundColor: FTColor.red,
+                            elevation: 0,
+                            shape: RoundedRectangleBorder(
+                              borderRadius:
+                                  BorderRadius.circular(10), // <-- Radius
+                            ),
+                          ),
+                          onPressed: () {},
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(FatigueTest.detail),
+                              Text('Detail')
+                            ],
+                          ))),
+                ],
+              ),
             ),
           ],
         ),

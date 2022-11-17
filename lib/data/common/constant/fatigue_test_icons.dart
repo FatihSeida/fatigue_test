@@ -25,11 +25,13 @@ class FatigueTest {
   static const _kFontFam = 'FatigueTest';
   static const String? _kFontPkg = null;
 
-  static const IconData calendarOutlilne = IconData(0xe800, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData calendarOutline = IconData(0xe800, fontFamily: _kFontFam, fontPackage: _kFontPkg);
   static const IconData dialpad = IconData(0xe801, fontFamily: _kFontFam, fontPackage: _kFontPkg);
   static const IconData kingBed = IconData(0xe802, fontFamily: _kFontFam, fontPackage: _kFontPkg);
   static const IconData listAlt = IconData(0xe803, fontFamily: _kFontFam, fontPackage: _kFontPkg);
   static const IconData helpDesk = IconData(0xe804, fontFamily: _kFontFam, fontPackage: _kFontPkg);
   static const IconData alarmOn = IconData(0xe805, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData detail = IconData(0xe806, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData filter = IconData(0xe807, fontFamily: _kFontFam, fontPackage: _kFontPkg);
   static const IconData drawer = IconData(0xe808, fontFamily: _kFontFam, fontPackage: _kFontPkg);
 }

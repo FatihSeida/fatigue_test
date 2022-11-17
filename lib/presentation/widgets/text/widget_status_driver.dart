@@ -23,7 +23,7 @@ class StatusTestWidget extends StatelessWidget {
         children: [
           Text(
             'Status Driver',
-            style: TextStyles.text10.copyWith(color: FTColor.grey),
+            style: TextStyles.text12.copyWith(color: FTColor.grey),
           ),
           Padding(
             padding: EdgeInsets.only(top: 7.h),
@@ -40,8 +40,8 @@ class StatusTestWidget extends StatelessWidget {
                   statusTest.name == 'buruburu'
                       ? 'Buru-Buru'
                       : statusTest.name == 'safe'
-                          ? 'safe'
-                          : 'unsafe',
+                          ? 'Safe'
+                          : 'Unsafe',
                   style: TextStyles.text12Bold.copyWith(color: Colors.white),
                 ),
               ),

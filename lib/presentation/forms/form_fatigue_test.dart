@@ -46,7 +46,7 @@ class FatigueTestForm extends StatelessWidget {
               padding: EdgeInsets.only(top: Insets.xxl),
               child: PickerButton(
                 title: 'Tanggal',
-                icon: Icon(FatigueTest.calendarOutlilne),
+                icon: Icon(FatigueTest.calendarOutline),
                 value: provider.selectedDateSleep == null
                     ? 'Pilih Tanggal'
                     : DateFormat('dd/MM/yyyy')

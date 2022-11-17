@@ -20,120 +20,125 @@ class LoginScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     context.read<AuthProvider>().context = context;
     return Scaffold(
-      body: SingleChildScrollView(
-        physics: const ScrollPhysics(),
-        child: Container(
-          decoration: const BoxDecoration(
-              color: Color(0xFFF5F5F5),
-              image: DecorationImage(
-                  alignment: Alignment.center,
-                  image: AssetImage("assets/images/background.png"),
-                  fit: BoxFit.fill)),
-          child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: Insets.xl),
-            child: Consumer<AuthProvider>(
-              builder: (_, provider, __) => Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: EdgeInsets.only(top: 60.h),
-                    child: SvgPicture.asset(
-                      Assets.logoSvg,
-                      height: 40.h,
-                    ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.only(top: Insets.xl),
-                    child: Text(
-                      'Silahkan masukkan nama lengkap Anda dan Nomor Induk Pegawai',
-                      style: TextStyles.text14,
-                    ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.only(top: 60.h),
-                    child: TextFormFieldText(
-                      title: "Nama Lengkap",
-                      hint: "Masukan Nama Anda Disini",
-                      textController: provider.usernameController,
-                      mandatory: false,
-                      enabled: true,
-                      onChanged: (value) {
-                        // context.read<AuthProvider>().username = value;
-                      },
-                    ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.only(top: Insets.lg),
-                    child: TextFormFieldText(
-                      title: "NIK",
-                      hint: "Masukan NIK Anda Disini",
-                      textController: provider.nikController,
-                      mandatory: false,
-                      enabled: true,
-                      onChanged: (value) {
-                        // context.read<AuthProvider>().username = value;
-                      },
-                    ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.only(top: Insets.xl),
-                    child: RichText(
-                        text: TextSpan(children: [
-                      TextSpan(
-                          text: 'Belum punya akun?', style: TextStyles.text12),
-                      TextSpan(
-                        text: ' Daftar disini',
-                        style:
-                            TextStyles.text12Bold.copyWith(color: FTColor.red),
-                        recognizer: TapGestureRecognizer()
-                          ..onTap = () {
-                            provider.clearData();
-                            Navigator.of(context)
-                                .pushNamed(RegistrationPage.routeName);
-                          },
-                      ),
-                    ], style: const TextStyle(color: Colors.black))),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.only(top: 110.h),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: Padding(
-                            padding: EdgeInsets.only(
-                                top: Insets.xl,
-                                right: Insets.xxl,
-                                left: Insets.xxl),
-                            child: ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                    backgroundColor: FTColor.red),
-                                onPressed: () {
-                                  context.read<AuthProvider>().getUser(
-                                      provider.usernameController.text,
-                                      provider.nikController.text);
-                                },
-                                child: Padding(
-                                  padding: EdgeInsets.symmetric(
-                                      vertical: Insets.med),
-                                  child: Text(
-                                    'Login',
-                                    style: TextStyles.text14Bold,
-                                  ),
-                                )),
-                          ),
+      body: Builder(
+        builder: (context) {
+          context.read<AuthProvider>().context = context;
+          return SingleChildScrollView(
+            physics: const ScrollPhysics(),
+            child: Container(
+              decoration: const BoxDecoration(
+                  color: Color(0xFFF5F5F5),
+                  image: DecorationImage(
+                      alignment: Alignment.center,
+                      image: AssetImage("assets/images/background.png"),
+                      fit: BoxFit.fill)),
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: Insets.xl),
+                child: Consumer<AuthProvider>(
+                  builder: (_, provider, __) => Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.only(top: 60.h),
+                        child: Image.asset(
+                          Assets.logo,
+                          height: 60.h,
                         ),
-                      ],
-                    ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.only(top: Insets.xl),
+                        child: Text(
+                          'Silahkan masukkan nama lengkap Anda dan Nomor Induk Pegawai',
+                          style: TextStyles.text14,
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.only(top: 60.h),
+                        child: TextFormFieldText(
+                          title: "Nama Lengkap",
+                          hint: "Masukan Nama Anda Disini",
+                          textController: provider.usernameController,
+                          mandatory: false,
+                          enabled: true,
+                          onChanged: (value) {
+                            // context.read<AuthProvider>().username = value;
+                          },
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.only(top: Insets.lg),
+                        child: TextFormFieldText(
+                          title: "NIK",
+                          hint: "Masukan NIK Anda Disini",
+                          textController: provider.nikController,
+                          mandatory: false,
+                          enabled: true,
+                          onChanged: (value) {
+                            // context.read<AuthProvider>().username = value;
+                          },
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.only(top: Insets.xl),
+                        child: RichText(
+                            text: TextSpan(children: [
+                          TextSpan(
+                              text: 'Belum punya akun?', style: TextStyles.text12),
+                          TextSpan(
+                            text: ' Daftar disini',
+                            style:
+                                TextStyles.text12Bold.copyWith(color: FTColor.red),
+                            recognizer: TapGestureRecognizer()
+                              ..onTap = () {
+                                provider.clearData();
+                                Navigator.of(context)
+                                    .pushNamed(RegistrationPage.routeName);
+                              },
+                          ),
+                        ], style: const TextStyle(color: Colors.black))),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.only(top: 110.h),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: Padding(
+                                padding: EdgeInsets.only(
+                                    top: Insets.xl,
+                                    right: Insets.xxl,
+                                    left: Insets.xxl),
+                                child: ElevatedButton(
+                                    style: ElevatedButton.styleFrom(
+                                        backgroundColor: FTColor.red),
+                                    onPressed: () {
+                                      context.read<AuthProvider>().getUser(
+                                          provider.usernameController.text,
+                                          provider.nikController.text);
+                                    },
+                                    child: Padding(
+                                      padding: EdgeInsets.symmetric(
+                                          vertical: Insets.med),
+                                      child: Text(
+                                        'Login',
+                                        style: TextStyles.text14Bold,
+                                      ),
+                                    )),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      SizedBox(
+                        height: 50.h,
+                      ),
+                    ],
                   ),
-                  SizedBox(
-                    height: 50.h,
-                  ),
-                ],
+                ),
               ),
             ),
-          ),
-        ),
+          );
+        }
       ),
     );
   }

@@ -37,8 +37,6 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
-
-  
   const MyApp({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
@@ -52,6 +50,7 @@ class MyApp extends StatelessWidget {
     return ScreenUtilInit(
       designSize: ScreenUtil.defaultSize,
       builder: (BuildContext context, _) => MaterialApp(
+        debugShowCheckedModeBanner: false,
         title: 'Fatigue Test',
         theme: ThemeData(
           fontFamily: 'Sen',

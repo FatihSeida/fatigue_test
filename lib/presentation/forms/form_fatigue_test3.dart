@@ -1,4 +1,3 @@
-import 'package:fatigue_tester/presentation/pages/page_result.dart';
 import 'package:fatigue_tester/presentation/providers/provider_fatigue_test.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -23,182 +22,143 @@ class _FatigueTestForm3State extends State<FatigueTestForm3> {
   @override
   void initState() {
     super.initState();
-
     Provider.of<FatigueTestProvider>(context, listen: false).initState();
-    // final provider = Provider.of<FatigueTestProvider>(context, listen: false);
   }
-
-  // final _isHours = true;
-
-  // final StopWatchTimer _stopWatchTimer = StopWatchTimer(
-  //   mode: StopWatchMode.countUp,
-  //   onChange: (value) => debugPrint('onChange $value'),
-  //   onChangeRawSecond: (value) => debugPrint('onChangeRawSecond $value'),
-  //   onChangeRawMinute: (value) => debugPrint('onChangeRawMinute $value'),
-  //   onStopped: () {
-  //     debugPrint('onStop');
-  //   },
-  //   onEnded: () {
-  //     debugPrint('onEnded');
-  //   },
-  // );
-
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   _stopWatchTimer.rawTime.listen((value) =>
-  //       debugPrint('rawTime $value ${StopWatchTimer.getDisplayTime(value)}'));
-  //   _stopWatchTimer.minuteTime
-  //       .listen((value) => debugPrint('minuteTime $value'));
-  //   _stopWatchTimer.secondTime
-  //       .listen((value) => debugPrint('secondTime $value'));
-  //   _stopWatchTimer.records.listen((value) => debugPrint('records $value'));
-  //   _stopWatchTimer.fetchStopped
-  //       .listen((value) => debugPrint('stopped from stream'));
-  //   _stopWatchTimer.fetchEnded
-  //       .listen((value) => debugPrint('ended from stream'));
-  // }
-
-  // @override
-  // void dispose() async {
-  //   super.dispose();
-  //   await _stopWatchTimer.dispose();
-  // }
 
   @override
   Widget build(BuildContext context) {
-    final provider = Provider.of<FatigueTestProvider>(context);
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: Insets.xl),
-      child: SingleChildScrollView(
-        physics: const ScrollPhysics(),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Padding(
-              padding: EdgeInsets.only(top: Insets.lg),
-              child: Icon(
-                FatigueTest.dialpad,
-                color: FTColor.red,
-                size: 32.h,
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.only(top: Insets.med),
-              child: Text(
-                'Urutkan nomor 1-20 berikut ini secepat yang anda bisa',
-                style: TextStyles.text16Bold,
-                textAlign: TextAlign.center,
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(top: 0),
-              child: StreamBuilder<int>(
-                stream: provider.stopWatchTimer.rawTime,
-                initialData: provider.stopWatchTimer.rawTime.value,
-                builder: (context, snap) {
-                  final value = snap.data!;
-                  final displayTime = StopWatchTimer.getDisplayTime(value,
-                      hours: provider.isHours);
-                  return Column(
-                    children: <Widget>[
+    return Consumer<FatigueTestProvider>(
+      builder: (_, provider, __) => Padding(
+        padding: EdgeInsets.symmetric(horizontal: Insets.xl),
+        child: SingleChildScrollView(
+            physics: const ScrollPhysics(),
+            child: provider.isReady
+                ? Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
                       Padding(
-                        padding: const EdgeInsets.all(8),
+                        padding: EdgeInsets.only(top: Insets.lg),
                         child: Text(
-                          displayTime,
+                          'Urutkan nomor 1 - 20 berikut ini',
                           style: TextStyles.text20Bold,
+                          textAlign: TextAlign.center,
                         ),
                       ),
+                      Padding(
+                          padding: EdgeInsets.only(top: Insets.med),
+                          child: ReorderableGridView.extent(
+                            physics: const NeverScrollableScrollPhysics(),
+                            onReorder: provider.onReorder,
+                            shrinkWrap: true,
+                            maxCrossAxisExtent: 100,
+                            childAspectRatio: 1,
+                            children: provider.shuffleItems.map((item) {
+                              return ReorderableGridDragStartListener(
+                                key: ValueKey(item),
+                                index: item,
+                                child: Padding(
+                                  key: ValueKey(item),
+                                  padding: const EdgeInsets.all(5),
+                                  child: Container(
+                                    decoration: FTStyle.coloredBorder(),
+                                    child: Padding(
+                                      padding: EdgeInsets.all(Insets.med),
+                                      child: Center(
+                                        child: Text(
+                                          "${item + 1}",
+                                          style: TextStyles.text20Bold,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              );
+                            }).toList(),
+                          )),
                     ],
-                  );
-                },
-              ),
-            ),
-            Padding(
-                padding: EdgeInsets.only(top: Insets.med),
-                child: ReorderableGridView.extent(
-                  physics: const NeverScrollableScrollPhysics(),
-                  onReorder: provider.onReorder,
-                  shrinkWrap: true,
-                  maxCrossAxisExtent: 100,
-                  childAspectRatio: 1,
-                  children: provider.shuffleItems.map((item) {
-                    return ReorderableGridDragStartListener(
-                      key: ValueKey(item),
-                      index: item,
-                      child: Padding(
-                        key: ValueKey(item),
-                        padding: const EdgeInsets.all(5),
-                        child: Container(
-                          decoration: FTStyle.coloredBorder(),
+                  )
+                : Column(
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.only(top: Insets.xl),
+                        child: Icon(
+                          FatigueTest.dialpad,
+                          color: FTColor.red,
+                          size: 32.h,
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.only(top: Insets.lg),
+                        child: Text(
+                          'Urutkan nomor 1-20 berikut ini secepat yang anda bisa',
+                          style: TextStyles.text20Bold,
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.only(top: Insets.xxl),
+                        child: Text(
+                          'Test akan segera dimulai',
+                          style: TextStyles.text20Bold,
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.only(top: Insets.med),
+                        child: StreamBuilder<int>(
+                          stream: provider.countdown.rawTime,
+                          initialData: provider.countdown.rawTime.value,
+                          builder: (context, snap) {
+                            final value = snap.data!;
+                            final displayTime = StopWatchTimer.getDisplayTime(
+                                value,
+                                hours: false,
+                                minute: false,
+                                milliSecond: false);
+                            return Column(
+                              children: <Widget>[
+                                Text(
+                                  displayTime,
+                                  style: TextStyles.text20Bold
+                                      .copyWith(fontSize: 100.h),
+                                ),
+                              ],
+                            );
+                          },
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.only(top: Insets.med),
+                        child: ElevatedButton(
+                          onPressed: () {
+                            provider.startTest();
+                          },
+                          style: ElevatedButton.styleFrom(
+                            padding: EdgeInsets.all(10),
+                            backgroundColor: FTColor.red, // <-- Button color
+                            foregroundColor: Colors.white, // <-- Splash color
+                          ),
                           child: Padding(
-                            padding: EdgeInsets.all(Insets.med),
-                            child: Center(
-                              child: Text(
-                                "${item + 1}",
-                                style: TextStyles.text20Bold,
-                              ),
+                            padding: EdgeInsets.symmetric(
+                                horizontal: Insets.xxl, vertical: Insets.sm),
+                            child: Text(
+                              'Mulai',
+                              style: TextStyles.text14Bold,
                             ),
                           ),
                         ),
                       ),
-                    );
-                  }).toList(),
-                )),
-
-            /// Button
-            Padding(
-              padding: EdgeInsets.only(top: Insets.med),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 4),
-                    child: ElevatedButton(
-                      onPressed: () async {
-                        await provider.startStopWatch();
-                        // .then((_) {
-                        //   if (!mounted) {
-                        //     return;
-                        //   }
-                        //   if (provider.play == false && provider.same == true) {
-                        //     Navigator.of(context)
-                        //         .pushNamed(ResultPage.routeName);
-                        //   }
-                        // });
-                      },
-                      style: ElevatedButton.styleFrom(
-                        shape: CircleBorder(),
-                        padding: EdgeInsets.all(20),
-                        backgroundColor: FTColor.red, // <-- Button color
-                        foregroundColor: Colors.white, // <-- Splash color
+                      Padding(
+                        padding: EdgeInsets.only(top: Insets.xl),
+                        child: Text(
+                          'Anda bisa mengulang test dengan menekan tombol kembalu lalu menekan tombol selanjutnya',
+                          style: TextStyles.text14,
+                          textAlign: TextAlign.center,
+                        ),
                       ),
-                      child: Icon(provider.play == false
-                          ? Icons.play_arrow
-                          : Icons.pause),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 4),
-                    child: ElevatedButton(
-                      onPressed: () {
-                        provider.resetTime();
-                      },
-                      style: ElevatedButton.styleFrom(
-                        shape: CircleBorder(),
-                        padding: EdgeInsets.all(20),
-                        backgroundColor: FTColor.red, // <-- Button color
-                        foregroundColor: Colors.white, // <-- Splash color
-                      ),
-                      child: Icon(Icons.stop),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
+                    ],
+                  )),
       ),
     );
   }

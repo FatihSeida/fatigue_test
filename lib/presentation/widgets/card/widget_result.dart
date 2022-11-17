@@ -98,7 +98,7 @@ class ResultWidget extends StatelessWidget {
                   ],
                 ),
                 Padding(
-                  padding: EdgeInsets.only(right: Insets.xxl),
+                  padding: EdgeInsets.only(left: Insets.lg),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,

@@ -11,6 +11,7 @@ class ResultTest extends ChangeNotifier {
     required this.sleepDate,
     required this.wakeupDate,
     required this.dateCreated,
+    required this.nikDriver,
   });
 
   final int idTest;
@@ -21,6 +22,7 @@ class ResultTest extends ChangeNotifier {
   final DateTime dateCreated;
   final int rateTest;
   final StatusTest statusTest;
+  final String nikDriver;
 
   ResultTest copyWith({
     int? idTest,
@@ -31,6 +33,7 @@ class ResultTest extends ChangeNotifier {
     DateTime? dateCreated,
     StatusTest? statusTest,
     int? rateTest,
+    String? nikDriver,
   }) =>
       ResultTest(
         idTest: idTest ?? this.idTest,
@@ -39,7 +42,9 @@ class ResultTest extends ChangeNotifier {
         wakeupDate: wakeupDate ?? this.wakeupDate,
         dateCreated: dateCreated ?? this.dateCreated,
         result: result ?? this.result,
-        statusTest: this.statusTest, rateTest: this.rateTest,
+        statusTest: this.statusTest,
+        rateTest: this.rateTest,
+        nikDriver: this.nikDriver,
       );
 
   factory ResultTest.fromMap(Map<String, dynamic> json) => ResultTest(
@@ -55,7 +60,9 @@ class ResultTest extends ChangeNotifier {
                 ? StatusTest.unsafe
                 : json["safe"] == 'notavailable'
                     ? StatusTest.safe
-                    : StatusTest.buruburu, rateTest: json["rate_test"],
+                    : StatusTest.buruburu,
+        rateTest: json["rate_test"],
+        nikDriver: json['nik_user'],
       );
 
   Map<String, dynamic> toMap() => {
@@ -67,5 +74,6 @@ class ResultTest extends ChangeNotifier {
         "date_created": dateCreated.toIso8601String(),
         "status_test": statusTest,
         "rate_test": rateTest,
+        "nik_user": nikDriver,
       };
 }

@@ -19,6 +19,8 @@ class FatigueTestProvider extends ChangeNotifier {
   FatigueTestProvider(this.user);
 
   final database = DatabaseSqflite().openDB();
+  User userDriver = User(name: '', nik: '', unit: '');
+  List<User> listUser = [];
   Function eq = const ListEquality().equals;
   final comparingItems = List<int>.generate(20, (index) => index);
   final items = List<int>.generate(20, (index) => index);
@@ -28,6 +30,11 @@ class FatigueTestProvider extends ChangeNotifier {
   late var shuffleItems = items;
   late bool same = false;
   late BuildContext _context;
+
+  bool isReady = false;
+
+  int pages = 1;
+  double width = 0.13;
 
   DateTime? selectedDateSleep;
   TimeOfDay? selectedTimeSleep;
@@ -45,12 +52,27 @@ class FatigueTestProvider extends ChangeNotifier {
       sleepDate: DateTime.now(),
       wakeupDate: DateTime.now(),
       dateCreated: DateTime.now(),
-      rateTest: 0);
+      rateTest: 0,
+      nikDriver: '');
 
   int rateTest = 0;
+  bool equal = false;
 
   final StopWatchTimer stopWatchTimer = StopWatchTimer(
     mode: StopWatchMode.countUp,
+    onChangeRawSecond: (value) => debugPrint('onChangeRawSecond $value'),
+    onChangeRawMinute: (value) => debugPrint('onChangeRawMinute $value'),
+    onStopped: () {
+      debugPrint('onStop');
+    },
+    onEnded: () {
+      debugPrint('onEnded');
+    },
+  );
+
+  final StopWatchTimer countdown = StopWatchTimer(
+    presetMillisecond: 5000,
+    mode: StopWatchMode.countDown,
     onChangeRawSecond: (value) => debugPrint('onChangeRawSecond $value'),
     onChangeRawMinute: (value) => debugPrint('onChangeRawMinute $value'),
     onStopped: () {
@@ -97,6 +119,11 @@ class FatigueTestProvider extends ChangeNotifier {
         .listen((value) => debugPrint('stopped from stream'));
     stopWatchTimer.fetchEnded
         .listen((value) => debugPrint('ended from stream'));
+
+    countdown.fetchStopped
+        .listen((value) => debugPrint('countdown stopped from stream'));
+    countdown.fetchEnded
+        .listen((value) => debugPrint('countdown ended from stream'));
   }
 
   Future<void> setLoading(bool loading) async {
@@ -117,11 +144,16 @@ class FatigueTestProvider extends ChangeNotifier {
     selectedTimeSleep = null;
     selectedDateWakeUp = null;
     selectedTimeWakeUp = null;
+    equal = false;
   }
 
   void onReorder(int oldIndex, int newIndex) {
     final item = items.removeAt(oldIndex);
     items.insert(newIndex, item);
+    if (eq(comparingItems, shuffleItems) == true) {
+      equal = true;
+      debugPrint('$equal');
+    }
     notifyListeners();
   }
 
@@ -130,34 +162,32 @@ class FatigueTestProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> startStopWatch() async {
-    if (play == false) {
-      setItems();
-      stopWatchTimer.onStartTimer();
-      play = true;
-      notifyListeners();
-    } else {
-      stopWatchTimer.onStopTimer();
-      if (eq(comparingItems, shuffleItems) == true) {
-        await sendData(
-          nik: user!.nik,
-          sleepDate: selectedDateSleep!,
-          sleepTime: selectedTimeSleep!,
-          wakeUpDate: selectedDateWakeUp!,
-          wakeUpTime: selectedTimeWakeUp!,
-          swt: stopWatchTimer.rawTime.value,
-        );
-        await getData();
-        same = true;
-        stopWatchTimer.onResetTimer();
-        clearData();
-        play = false;
+  Future<void> startTest() async {
+    countdown.onStartTimer();
+    await countdown.fetchEnded.listen((event) {
+      if (event) {
+        isReady = true;
+        setItems();
+        stopWatchTimer.onStartTimer();
         notifyListeners();
       }
-      play = false;
-      stopWatchTimer.onResetTimer();
-      notifyListeners();
-    }
+    });
+  }
+
+  Future<void> sendResult() async {
+    stopWatchTimer.onStopTimer();
+    await sendData(
+      nik: user!.nik,
+      sleepDate: selectedDateSleep!,
+      sleepTime: selectedTimeSleep!,
+      wakeUpDate: selectedDateWakeUp!,
+      wakeUpTime: selectedTimeWakeUp!,
+      swt: stopWatchTimer.rawTime.value,
+    );
+    await getData();
+    stopWatchTimer.onResetTimer();
+    clearData();
+    notifyListeners();
   }
 
   void resetTime() {
@@ -209,14 +239,76 @@ class FatigueTestProvider extends ChangeNotifier {
   Future<void> getData() async {
     try {
       final Database db = await database;
-      final List<Map<String, dynamic>> maps =
-          await db.query('test', where: "nik_user = ?", whereArgs: [user!.nik]);
-      var result = List<ResultTest>.generate(
-          maps.length, (i) => ResultTest.fromMap(maps[i]));
-      resultTest = result;
-      if (result.isNotEmpty) {
-        lastResultTest = result[result.length - 1];
+      if (user!.unit == "Head Office") {
+        final List<Map<String, dynamic>> maps = await db.query('test');
+        var result = List<ResultTest>.generate(
+            maps.length, (i) => ResultTest.fromMap(maps[i]));
+        resultTest = result;
+        notifyListeners();
+      } else if (user!.unit == "Operasional") {
+        final List<Map<String, dynamic>> maps = await db
+            .query('test', where: "nik_user = ?", whereArgs: [user!.nik]);
+        var result = List<ResultTest>.generate(
+            maps.length, (i) => ResultTest.fromMap(maps[i]));
+        resultTest = result;
+        if (result.isNotEmpty) {
+          lastResultTest = result[result.length - 1];
+        }
+        notifyListeners();
       }
+      notifyListeners();
+    } catch (e) {
+      log(e.toString());
+    }
+  }
+
+  Future<void> getUserData() async {
+    try {
+      final Database db = await database;
+      final List<Map<String, dynamic>> maps =
+          await db.query('user', where: 'unit=?', whereArgs: ['Operasional']);
+      var result =
+          List<User>.generate(maps.length, (i) => User.fromMap(maps[i]));
+      listUser = result;
+    } catch (e) {
+      log(e.toString());
+      rethrow;
+    }
+  }
+
+  User getUserDetailData(String nik) {
+    try {
+      for (int i = 0; i < listUser.length; i++) {
+        if (listUser.elementAt(i) == nik) {
+          userDriver = listUser[i];
+          notifyListeners();
+          return userDriver;
+        }
+      }
+      return userDriver;
+    } catch (e) {
+      log(e.toString());
+      rethrow;
+    }
+  }
+
+  Future<void> deleteData(String nik, int testNumber) async {
+    try {
+      final Database db = await database;
+      await db.rawDelete('DELETE FROM test WHERE nik_user=? and test_number=?',
+          [nik, testNumber]);
+      getData();
+      notifyListeners();
+    } catch (e) {
+      log(e.toString());
+    }
+  }
+
+  Future<void> deleteAll(String nik) async {
+    try {
+      final Database db = await database;
+      await db.rawDelete('DELETE FROM test WHERE nik_user=?', [nik]);
+      getData();
       notifyListeners();
     } catch (e) {
       log(e.toString());
@@ -226,9 +318,9 @@ class FatigueTestProvider extends ChangeNotifier {
   Future<void> selectDateSleep(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
         context: context,
-        initialDate: DateTime.now().subtract(Duration(days: 1)),
+        initialDate: DateTime.now(),
         firstDate: DateTime(2015, 8),
-        lastDate: DateTime.now().subtract(Duration(days: 1)));
+        lastDate: DateTime.now());
     if (picked != null) {
       selectedDateSleep = picked;
       notifyListeners();
@@ -236,8 +328,17 @@ class FatigueTestProvider extends ChangeNotifier {
   }
 
   Future selectTimeSleep(BuildContext context) async {
-    var pickedTime =
-        await showTimePicker(context: context, initialTime: TimeOfDay.now());
+    var pickedTime = await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay.now(),
+      builder: (BuildContext context, Widget? child) {
+        return MediaQuery(
+          data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true),
+          child: child!,
+        );
+      },
+    );
+
     if (pickedTime != null) {
       selectedTimeSleep = pickedTime;
       notifyListeners();
@@ -248,7 +349,7 @@ class FatigueTestProvider extends ChangeNotifier {
     final DateTime? picked = await showDatePicker(
         context: context,
         initialDate: DateTime.now(),
-        firstDate: DateTime(2015, 8),
+        firstDate: selectedDateSleep!,
         lastDate: DateTime.now());
     if (picked != null) {
       selectedDateWakeUp = picked;
@@ -257,8 +358,16 @@ class FatigueTestProvider extends ChangeNotifier {
   }
 
   Future selectTimeWakeUp(BuildContext context) async {
-    var pickedTime =
-        await showTimePicker(context: context, initialTime: TimeOfDay.now());
+    var pickedTime = await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay.now(),
+      builder: (BuildContext context, Widget? child) {
+        return MediaQuery(
+          data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true),
+          child: child!,
+        );
+      },
+    );
     if (pickedTime != null) {
       selectedTimeWakeUp = pickedTime;
       notifyListeners();
