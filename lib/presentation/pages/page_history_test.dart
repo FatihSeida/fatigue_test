@@ -18,59 +18,12 @@ class HistoryTestPage extends StatelessWidget {
     switch (value) {
       case 'Filter':
         debugPrint('1');
-        DateTime? newDateTime = await showRoundedDatePicker(
-            borderRadius: 0,
-            textActionButton: 'RESET',
-            onTapActionButton: () {},
-            context: context,
-            styleDatePicker: MaterialRoundedDatePickerStyle(
-                textStyleDayButton:
-                    TextStyles.text16Bold.copyWith(color: Colors.black),
-                textStyleYearButton:
-                    TextStyles.text16Bold.copyWith(color: Colors.white),
-                textStyleDayHeader:
-                    TextStyles.text16Bold.copyWith(color: Colors.black),
-                textStyleCurrentDayOnCalendar:
-                    TextStyles.text14Bold.copyWith(color: Colors.white),
-                textStyleDayOnCalendar:
-                    TextStyles.text14.copyWith(color: Colors.black),
-                textStyleDayOnCalendarSelected:
-                    TextStyles.text14Bold.copyWith(color: Colors.white),
-                textStyleDayOnCalendarDisabled: TextStyles.text16Bold
-                    .copyWith(color: Colors.white.withOpacity(0.1)),
-                textStyleMonthYearHeader:
-                    TextStyles.text16Bold.copyWith(color: Colors.black),
-                paddingDatePicker: const EdgeInsets.all(0),
-                paddingMonthHeader: const EdgeInsets.all(32),
-                paddingActionBar: const EdgeInsets.all(16),
-                paddingDateYearHeader: const EdgeInsets.all(32),
-                sizeArrow: 20,
-                colorArrowNext: Colors.black,
-                colorArrowPrevious: Colors.black,
-                marginLeftArrowPrevious: 16,
-                marginTopArrowPrevious: 16,
-                marginTopArrowNext: 16,
-                marginRightArrowNext: 32,
-                textStyleButtonAction:
-                    TextStyles.text16Bold.copyWith(color: Colors.white),
-                textStyleButtonPositive:
-                    TextStyles.text16Bold.copyWith(color: Colors.white),
-                textStyleButtonNegative: TextStyles.text16Bold
-                    .copyWith(color: Colors.white.withOpacity(0.5)),
-                decorationDateSelected: const BoxDecoration(
-                    color: FTColor.red, shape: BoxShape.rectangle),
-                backgroundPicker: Colors.white,
-                backgroundActionBar: FTColor.red,
-                backgroundHeaderMonth: Colors.white,
-                backgroundHeader: FTColor.red),
-            styleYearPicker: MaterialRoundedYearPickerStyle(
-              textStyleYear: TextStyles.text16Bold
-                  .copyWith(color: Colors.white, fontSize: 50),
-              textStyleYearSelected: TextStyles.text16Bold
-                  .copyWith(color: Colors.white, fontSize: 50),
-              heightYearRow: 100,
-              backgroundPicker: FTColor.red,
-            ));
+        await ftProvider.selectDateFilter(context);
+        await ftProvider.resultTestFiltered(
+            null,
+            null,
+            ftProvider.selectedDateFilterStart,
+            ftProvider.selectedDateFilterEnd);
         break;
       case 'Delete All':
         debugPrint('2');

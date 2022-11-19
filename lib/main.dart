@@ -28,7 +28,6 @@ void main() {
         update: (ctx, auth, user) => RegistrationProvider(),
       ),
       ChangeNotifierProxyProvider<AuthProvider, FatigueTestProvider>(
-        lazy: true,
         create: (context) => FatigueTestProvider(null),
         update: (ctx, auth, user) => FatigueTestProvider(auth.user),
       ),
@@ -86,7 +85,6 @@ class Route extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<AuthProvider>(builder: (context, AuthProvider auth, _) {
       print("status ${auth.status}");
-      // return const HomePage();
       switch (auth.status) {
         case Authentication.authenticated:
           return const LandingPage();

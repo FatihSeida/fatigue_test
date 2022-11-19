@@ -14,26 +14,45 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
+import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:provider/provider.dart';
+import 'package:top_snackbar_flutter/custom_snack_bar.dart';
+import 'package:top_snackbar_flutter/top_snack_bar.dart';
 
 import '../../data/common/constant/assets.dart';
 import '../../data/common/constant/authentication.dart';
 import '../../data/common/constant/color.dart';
 import '../../data/common/constant/styles.dart';
 import '../../data/model/user.dart';
+import '../widgets/button/button_picker.dart';
+import '../widgets/input/text_form_field_text.dart';
 import '../widgets/text/widget_status_driver.dart';
 
 class LandingPage extends StatelessWidget {
   static const routeName = '/landing';
   const LandingPage({Key? key}) : super(key: key);
 
+  Future<void> showMessage(
+      bool success, String message, BuildContext context) async {
+    showTopSnackBar(
+      context,
+      success
+          ? CustomSnackBar.success(
+              message: message,
+            )
+          : CustomSnackBar.error(
+              message: message,
+            ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final provider = Provider.of<AuthProvider>(context);
-    Provider.of<FatigueTestProvider>(context, listen: false).initData();
-    return Scaffold(
-      drawer: Consumer<FatigueTestProvider>(
-        builder: (_, ftProvider, __) => Drawer(
+    context.read<FatigueTestProvider>().initData();
+    return Consumer<FatigueTestProvider>(
+      builder: (_, ftProvider, __) => Scaffold(
+        drawer: Drawer(
           backgroundColor: Colors.white,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -89,6 +108,8 @@ class LandingPage extends StatelessWidget {
                             ),
                             onTap: () {
                               ftProvider.getCsv();
+                              showMessage(
+                                  true, 'Data Berhasil Diunduh', context);
                             },
                           ),
                         )
@@ -153,89 +174,94 @@ class LandingPage extends StatelessWidget {
             ],
           ),
         ),
-      ),
-      appBar: FTAppBar(
-        title: Image.asset(Assets.logo, height: 40.h),
-        leading: Builder(
-          builder: (context) => IconButton(
-              onPressed: () => Scaffold.of(context).openDrawer(),
-              icon: const Icon(
-                FatigueTest.drawer,
-                color: Colors.black,
-              )),
+        appBar: FTAppBar(
+          title: Image.asset(Assets.logo, height: 40.h),
+          leading: Builder(
+            builder: (context) => IconButton(
+                onPressed: () => Scaffold.of(context).openDrawer(),
+                icon: const Icon(
+                  FatigueTest.drawer,
+                  color: Colors.black,
+                )),
+          ),
+          actions: provider.user!.unit == 'Head Office'
+              ? [
+                  IconButton(
+                      onPressed: () {
+                        ftProvider.getModal(context);
+                      },
+                      icon: Icon(FatigueTest.filter))
+                ]
+              : [],
         ),
-        actions: provider.user!.unit == 'Head Office'
-            ? [IconButton(onPressed: () {}, icon: Icon(FatigueTest.filter))]
-            : [],
-      ),
-      body: SingleChildScrollView(
-          physics: ScrollPhysics(),
-          child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: Insets.xl),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: EdgeInsets.only(top: Insets.xl),
-                  child: Text(
-                    'Hi, Selamat Datang',
-                    style: TextStyles.text16Bold,
+        body: SingleChildScrollView(
+            physics: ScrollPhysics(),
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: Insets.xl),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: EdgeInsets.only(top: Insets.xl),
+                    child: Text(
+                      'Hi, Selamat Datang',
+                      style: TextStyles.text16Bold,
+                    ),
                   ),
-                ),
-                Padding(
-                  padding: EdgeInsets.only(top: Insets.xs),
-                  child: Text(
-                    provider.user!.name,
-                    style: TextStyles.text14.copyWith(color: FTColor.grey),
+                  Padding(
+                    padding: EdgeInsets.only(top: Insets.xs),
+                    child: Text(
+                      provider.user!.name,
+                      style: TextStyles.text14.copyWith(color: FTColor.grey),
+                    ),
                   ),
-                ),
-                Padding(
-                  padding: EdgeInsets.only(top: Insets.xl),
-                  child: Container(
-                    decoration: FTStyle.coloredBorder().copyWith(
-                        image: const DecorationImage(
-                            image: AssetImage(Assets.containerBackgroundImage),
-                            fit: BoxFit.cover)),
-                    child: Padding(
-                      padding: EdgeInsets.all(Insets.xl),
-                      child: Row(
-                        children: [
-                          Image.asset(
-                            Assets.avatarHelper,
-                            height: 82.h,
-                          ),
-                          Expanded(
-                            child: Padding(
-                              padding: EdgeInsets.only(left: Insets.xl),
-                              child: Column(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    'Utamakan keselamatan dalam bekerja',
-                                    style: TextStyles.text16Bold
-                                        .copyWith(color: FTColor.red),
-                                  ),
-                                  Padding(
-                                    padding: EdgeInsets.only(top: Insets.med),
-                                    child: Text(
-                                      'Keselamatan dimulai dari diri sendiri',
-                                      style: TextStyles.text12
-                                          .copyWith(color: FTColor.grey),
-                                    ),
-                                  ),
-                                ],
-                              ),
+                  Padding(
+                    padding: EdgeInsets.only(top: Insets.xl),
+                    child: Container(
+                      decoration: FTStyle.coloredBorder().copyWith(
+                          image: const DecorationImage(
+                              image:
+                                  AssetImage(Assets.containerBackgroundImage),
+                              fit: BoxFit.cover)),
+                      child: Padding(
+                        padding: EdgeInsets.all(Insets.xl),
+                        child: Row(
+                          children: [
+                            Image.asset(
+                              Assets.avatarHelper,
+                              height: 82.h,
                             ),
-                          )
-                        ],
+                            Expanded(
+                              child: Padding(
+                                padding: EdgeInsets.only(left: Insets.xl),
+                                child: Column(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      'Utamakan keselamatan dalam bekerja',
+                                      style: TextStyles.text16Bold
+                                          .copyWith(color: FTColor.red),
+                                    ),
+                                    Padding(
+                                      padding: EdgeInsets.only(top: Insets.med),
+                                      child: Text(
+                                        'Keselamatan dimulai dari diri sendiri',
+                                        style: TextStyles.text12
+                                            .copyWith(color: FTColor.grey),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            )
+                          ],
+                        ),
                       ),
                     ),
                   ),
-                ),
-                provider.user!.unit == "Head Office"
-                    ? Consumer<FatigueTestProvider>(
-                        builder: (_, ftProvider, __) => Column(
+                  provider.user!.unit == "Head Office"
+                      ? Column(
                           mainAxisSize: MainAxisSize.min,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -254,10 +280,13 @@ class LandingPage extends StatelessWidget {
                                   padding: EdgeInsets.only(top: Insets.med),
                                   child: DriverResult(
                                     user: ftProvider.listUser.singleWhere(
-                                        (element) =>
-                                            element.nik ==
-                                            ftProvider
-                                                .resultTest[index].nikDriver),
+                                      (element) =>
+                                          element!.nik ==
+                                          ftProvider
+                                              .resultTest[index].nikDriver,
+                                      orElse: () =>
+                                          User(name: '', nik: '', unit: ''),
+                                    ),
                                     resultTest: ftProvider.resultTest[index],
                                   ),
                                 );
@@ -265,61 +294,118 @@ class LandingPage extends StatelessWidget {
                               itemCount: ftProvider.resultTest.length,
                             ),
                           ],
-                        ),
-                      )
-                    : Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Padding(
-                            padding: EdgeInsets.only(top: Insets.xl),
-                            child: Text(
-                              'Kenapa keselamatan kerja itu penting?',
-                              style: TextStyles.text16Bold,
-                            ),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.only(top: Insets.xl),
-                            child: Text(
-                              'Upaya kita untuk menciptakan lingkungan kerja yang sehat dan aman, sehingga dapat mengurangi porbabilitas kecelakaan kerja / penyakit akibat kelalaian yang mengakibatkan demotivasi dan defisiensi produktifitas kerja.',
-                              style: TextStyles.text14
-                                  .copyWith(color: FTColor.grey),
-                            ),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.only(top: 45.h),
-                            child: Padding(
-                              padding:
-                                  EdgeInsets.symmetric(horizontal: Insets.xxl),
-                              child: Row(
-                                children: [
-                                  ButtonDefault(
-                                      title: 'Mulai Test',
-                                      onTap: () {
-                                        Navigator.of(context).pushNamed(
-                                            FatigueTestPage.routeName);
-                                      }),
-                                ],
+                        )
+                      : Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Padding(
+                              padding: EdgeInsets.only(top: Insets.xl),
+                              child: Text(
+                                'Kenapa keselamatan kerja itu penting?',
+                                style: TextStyles.text16Bold,
                               ),
                             ),
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Padding(
-                                padding: EdgeInsets.only(top: Insets.lg),
-                                child: Text(
-                                  'Tap tombol mulai, untuk melakukan Fatigue test',
-                                  style: TextStyles.text12
-                                      .copyWith(color: FTColor.grey),
+                            Padding(
+                              padding: EdgeInsets.only(top: Insets.xl),
+                              child: Text(
+                                'Upaya kita untuk menciptakan lingkungan kerja yang sehat dan aman, sehingga dapat mengurangi porbabilitas kecelakaan kerja / penyakit akibat kelalaian yang mengakibatkan demotivasi dan defisiensi produktifitas kerja.',
+                                style: TextStyles.text14
+                                    .copyWith(color: FTColor.grey),
+                              ),
+                            ),
+                            Padding(
+                              padding: EdgeInsets.only(top: 45.h),
+                              child: Padding(
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: Insets.xxl),
+                                child: Row(
+                                  children: [
+                                    ButtonDefault(
+                                        title: 'Mulai Test',
+                                        onTap: () {
+                                          Navigator.of(context).pushNamed(
+                                              FatigueTestPage.routeName);
+                                        }),
+                                  ],
                                 ),
                               ),
-                            ],
-                          )
-                        ],
-                      ),
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Padding(
+                                  padding: EdgeInsets.only(top: Insets.lg),
+                                  child: Text(
+                                    'Tap tombol mulai, untuk melakukan Fatigue test',
+                                    style: TextStyles.text12
+                                        .copyWith(color: FTColor.grey),
+                                  ),
+                                ),
+                              ],
+                            )
+                          ],
+                        ),
+                ],
+              ),
+            )),
+      ),
+    );
+  }
+}
+
+class StatusTestFilterItem extends StatelessWidget {
+  const StatusTestFilterItem({
+    Key? key,
+    required this.function,
+    required this.title,
+    required this.selected,
+  }) : super(key: key);
+
+  final bool selected;
+  final Function() function;
+  final String title;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.only(top: Insets.med),
+      child: InkWell(
+        onTap: function,
+        child: Container(
+          decoration: FTStyle.coloredBorder(
+                  color: selected ? FTColor.green : FTColor.greyColorBorder)
+              .copyWith(color: Colors.white),
+          child: Padding(
+            padding: EdgeInsets.symmetric(
+                horizontal: Insets.xs, vertical: Insets.med),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: EdgeInsets.only(left: Insets.med),
+                  child: selected
+                      ? Icon(
+                          Icons.trip_origin,
+                          color: FTColor.green,
+                        )
+                      : Icon(Icons.panorama_fish_eye),
+                ),
+                Padding(
+                  padding: EdgeInsets.only(
+                    left: Insets.med,
+                  ),
+                  child: Text(
+                    title,
+                    style: TextStyles.text12.copyWith(
+                        color: selected ? FTColor.green : Colors.grey),
+                  ),
+                ),
               ],
             ),
-          )),
+          ),
+        ),
+      ),
     );
   }
 }
@@ -331,7 +417,7 @@ class DriverResult extends StatelessWidget {
     required this.resultTest,
   }) : super(key: key);
 
-  final User user;
+  final User? user;
   final ResultTest resultTest;
 
   @override
@@ -385,7 +471,7 @@ class DriverResult extends StatelessWidget {
                         top: Insets.med,
                       ),
                       child: InformationItem(
-                          title: 'Nama Driver', value: user.name),
+                          title: 'Nama Driver', value: user!.name),
                     ),
                   ],
                 ),
@@ -401,6 +487,7 @@ class DriverResult extends StatelessWidget {
                             backgroundColor: Colors.white,
                             foregroundColor: FTColor.red,
                             elevation: 0,
+                            side: BorderSide(width: 1.0, color: FTColor.red),
                             shape: RoundedRectangleBorder(
                               borderRadius:
                                   BorderRadius.circular(10), // <-- Radius

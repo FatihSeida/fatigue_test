@@ -58,7 +58,7 @@ class ResultTest extends ChangeNotifier {
             ? StatusTest.notavailable
             : json["status_test"] == 'unsafe'
                 ? StatusTest.unsafe
-                : json["safe"] == 'notavailable'
+                : json["status_test"] == 'safe'
                     ? StatusTest.safe
                     : StatusTest.buruburu,
         rateTest: json["rate_test"],

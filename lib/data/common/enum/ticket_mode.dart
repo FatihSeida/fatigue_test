@@ -1,1 +1,0 @@
-enum TicketMode { inspeksi, capa }

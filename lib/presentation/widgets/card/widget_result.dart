@@ -181,8 +181,8 @@ class ResultWidget extends StatelessWidget {
                                   resultTest.statusTest.name == 'buruburu'
                                       ? 'Buru-Buru'
                                       : resultTest.statusTest.name == 'safe'
-                                          ? 'safe'
-                                          : 'unsafe',
+                                          ? 'Safe'
+                                          : 'Unsafe',
                                   style: TextStyles.text16Bold
                                       .copyWith(color: Colors.white),
                                 )

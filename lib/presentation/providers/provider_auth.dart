@@ -22,7 +22,6 @@ class AuthProvider extends ChangeNotifier {
   static const table = 'user';
   Authentication get status => _status;
   Authentication _status = Authentication.uninitialized;
-  late BuildContext _context;
   // BuildContext context;
   final _loadingDialog = LoadingDialog();
   bool isObscure = true;
@@ -54,42 +53,21 @@ class AuthProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> setLoading(bool loading) async {
-    loading ? _loadingDialog.show(_context) : _loadingDialog.hide();
-  }
-
-  /// Init
-  set context(BuildContext context) => _context = context;
-
-  Future<void> showMessage(bool success, String message) async {
-    showTopSnackBar(
-      _context,
-      success
-          ? CustomSnackBar.success(
-              message: message,
-            )
-          : CustomSnackBar.error(
-              message: message,
-            ),
-    );
-  }
-
   Future<bool> getUser(String name, String nik) async {
     try {
-      setLoading(true);
+      loading = true;
       Database db = await database;
       final res = await db.rawQuery(
           "SELECT * FROM $table WHERE name = '$name' AND nik = '$nik'");
       if (res.isNotEmpty) {
         User user = User.fromMap(res[0]);
         SpUtil.putString(USER_ID, user.nik);
-        setLoading(false);
+        loading = false;
         setStatus(Authentication.authenticated);
         _user = user;
         return true;
       } else {
-        setLoading(false);
-        showMessage(false, 'User tidak ditemukan');
+        loading = false;
         return false;
       }
     } catch (e) {

@@ -9,11 +9,10 @@ class DetailResultPage extends StatelessWidget {
   static const routeName = '/detail-result';
   const DetailResultPage({Key? key}) : super(key: key);
 
-  
-
   @override
   Widget build(BuildContext context) {
-    final arguments = (ModalRoute.of(context)?.settings.arguments ?? <String, dynamic>{}) as Map;
+    final arguments = (ModalRoute.of(context)?.settings.arguments ??
+        <String, dynamic>{}) as Map;
     return Scaffold(
         appBar: FTAppBar(
           title: Text(
@@ -29,7 +28,10 @@ class DetailResultPage extends StatelessWidget {
                     horizontal: Insets.xl, vertical: Insets.xxl),
                 child: Column(
                   children: [
-                    DriverResultDetailWidget(resultTes: arguments['test'],user: arguments['user'],)
+                    DriverResultDetailWidget(
+                      resultTes: arguments['test'],
+                      user: arguments['user'],
+                    )
                   ],
                 ),
               ),
