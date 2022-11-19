@@ -83,7 +83,7 @@ class FatigueTestProvider extends ChangeNotifier {
       await getData();
       resultTest = resultTest
           .where((result) =>
-              result.nikDriver == userFilter.nik &&
+              result.nikDriver == userFilter.nik && 
               result.statusTest == statusTestFilter &&
               dateStart.isBefore(result.dateCreated) &&
               dateEnd.isAfter(result.dateCreated))
@@ -861,7 +861,7 @@ class FatigueTestProvider extends ChangeNotifier {
                                             onPressed: () async {
                                               await resultTestFiltered(
                                                   driverNameFilter!.text,
-                                                  getStatusTest,
+                                                  _selectedStatusTest == StatusTest.all ? null : getStatusTest,
                                                   selectedDateFilterStart,
                                                   selectedDateFilterEnd);
                                               await clearData();
